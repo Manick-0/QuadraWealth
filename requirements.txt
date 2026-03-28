@@ -6,14 +6,16 @@ pydantic-settings>=2.0
 aiosqlite>=0.19.0
 sqlalchemy>=2.0
 
-# Data & AI
+# Data
 yfinance>=0.2.36
 requests>=2.31.0
 pandas>=2.1.0
 numpy>=1.26.0
+
+# RAG
 chromadb>=0.4.0
 
-# Frontend (also needed for Streamlit Cloud deploy)
+# Frontend (for local dev)
 streamlit>=1.31.0
 plotly>=5.18.0
 folium>=0.15.0

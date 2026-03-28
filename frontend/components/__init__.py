@@ -149,23 +149,13 @@ def inject_custom_css():
         border: none !important;
     }
 
-    /* Hide ALL Streamlit branding and chrome */
+    /* Hide Streamlit branding (safe — won't break sidebar) */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header[data-testid="stHeader"] {display: none !important;}
     div[data-testid="stToolbar"] {display: none !important;}
-    div[data-testid="stDecoration"] {display: none !important;}
-    div[data-testid="stStatusWidget"] {display: none !important;}
     .stDeployButton {display: none !important;}
-    #stDecoration {display: none !important;}
     .viewerBadge_container__r5tak {display: none !important;}
     .styles_viewerBadge__CvC9N {display: none !important;}
-
-    /* Hide keyboard_double text but keep sidebar functional */
-    [data-testid="collapsedControl"] { font-size: 0 !important; color: transparent !important; }
-    [data-testid="collapsedControl"] * { font-size: 0 !important; color: transparent !important; }
-    .stAppHeader { background: transparent !important; }
-    header[data-testid="stHeader"] { background: transparent !important; height: 0 !important; min-height: 0 !important; }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }

@@ -246,7 +246,7 @@ def api_get(endpoint: str, params: dict = None):
     """Make a GET request to the backend API."""
     import requests
     try:
-        resp = requests.get(f"{BACKEND_URL}{endpoint}", params=params, timeout=15)
+        resp = requests.get(f"{BACKEND_URL}{endpoint}", params=params, timeout=60)
         if resp.status_code == 200:
             return resp.json()
         else:
@@ -264,7 +264,7 @@ def api_post(endpoint: str, params: dict = None, json_data: dict = None):
     """Make a POST request to the backend API."""
     import requests
     try:
-        resp = requests.post(f"{BACKEND_URL}{endpoint}", params=params, json=json_data, timeout=30)
+        resp = requests.post(f"{BACKEND_URL}{endpoint}", params=params, json=json_data, timeout=60)
         if resp.status_code == 200:
             return resp.json()
         else:

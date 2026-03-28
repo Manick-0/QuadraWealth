@@ -161,6 +161,14 @@ def inject_custom_css():
     .viewerBadge_container__r5tak {display: none !important;}
     .styles_viewerBadge__CvC9N {display: none !important;}
 
+    /* Kill keyboard_double sidebar collapse button */
+    [data-testid="collapsedControl"] {display: none !important;}
+    button[kind="header"] {display: none !important;}
+    .stAppHeader {display: none !important;}
+    header {display: none !important; height: 0 !important; visibility: hidden !important;}
+    .st-emotion-cache-h4xjwg {display: none !important;}
+    .st-emotion-cache-yfhhig {display: none !important;}
+
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0E1117; }

@@ -11,3 +11,16 @@ yfinance>=0.2.36
 requests>=2.31.0
 pandas>=2.1.0
 numpy>=1.26.0
+
+# RAG (optional — skipped on Render free tier)
+chromadb>=0.4.0
+
+# Frontend
+streamlit>=1.31.0
+plotly>=5.18.0
+folium>=0.15.0
+streamlit-folium>=0.18.0
+
+# Testing
+pytest>=8.0.0
+httpx>=0.27.0

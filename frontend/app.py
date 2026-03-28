@@ -242,4 +242,11 @@ st.markdown("")
 st.markdown("")
 
 # ── Navigation hint ──
-st.info("👈 Use the **sidebar** to navigate between modes, or click a page in the sidebar menu.", icon="🧭")
+st.info("Use the **sidebar** to navigate between modes, or click a page in the sidebar menu.", icon="🧭")
+
+st.markdown("")
+st.markdown("""
+<div style="text-align: center; padding: 2rem 0 1rem; color: rgba(250,250,250,0.4); font-size: 0.9rem;">
+    Made by <span style="color: #00D4AA; font-weight: 600;">Manik Jindal (Nick)</span>
+</div>
+""", unsafe_allow_html=True)

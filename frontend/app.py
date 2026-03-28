@@ -109,8 +109,17 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(0, 212, 170, 0.1);
 }
 
+/* Hide all Streamlit branding and chrome */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+header[data-testid="stHeader"] {display: none !important;}
+div[data-testid="stToolbar"] {display: none !important;}
+div[data-testid="stDecoration"] {display: none !important;}
+div[data-testid="stStatusWidget"] {display: none !important;}
+.stDeployButton {display: none !important;}
+#stDecoration {display: none !important;}
+.viewerBadge_container__r5tak {display: none !important;}
+.styles_viewerBadge__CvC9N {display: none !important;}
 </style>
 """, unsafe_allow_html=True)
 

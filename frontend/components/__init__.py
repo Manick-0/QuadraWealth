@@ -149,10 +149,13 @@ def inject_custom_css():
         border: none !important;
     }
 
-    /* Hide ALL Streamlit branding and chrome */
+    /* Hide Streamlit branding but KEEP sidebar toggle */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header[data-testid="stHeader"] {display: none !important;}
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+        border-bottom: none !important;
+    }
     div[data-testid="stToolbar"] {display: none !important;}
     div[data-testid="stDecoration"] {display: none !important;}
     div[data-testid="stStatusWidget"] {display: none !important;}

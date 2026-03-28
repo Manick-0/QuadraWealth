@@ -210,6 +210,17 @@ section[data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0E1117 0%, #141824 100%);
     border-right: 1px solid rgba(0, 212, 170, 0.1);
 }
+/* Rename 'app' to 'Home' in sidebar nav */
+section[data-testid="stSidebar"] a[href="/"] span {
+    visibility: hidden;
+    position: relative;
+}
+section[data-testid="stSidebar"] a[href="/"] span::after {
+    content: "Home";
+    visibility: visible;
+    position: absolute;
+    left: 0;
+}
 /* Hide ALL Streamlit branding and chrome */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}

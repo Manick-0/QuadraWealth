@@ -307,7 +307,7 @@ st.markdown("""
         <div class="stat-label">Properties Tracked</div>
     </div>
     <div class="stat-item">
-        <div class="stat-value">3</div>
+        <div class="stat-value">4</div>
         <div class="stat-label">Sportsbooks</div>
     </div>
     <div class="stat-item">
@@ -328,7 +328,7 @@ with col1:
     <div class="mode-card card-anim-1">
         <div class="mode-icon">📈</div>
         <div class="mode-title">Stocks</div>
-        <div class="mode-desc">AI-powered equity recommendations with real-time market data and RAG analysis.</div>
+        <div class="mode-desc">Hot stock screener: PE, ROE, EPS, D/E, EMA200 + RAG news analysis.</div>
     </div>
     </a>
     """, unsafe_allow_html=True)
@@ -339,7 +339,7 @@ with col2:
     <div class="mode-card card-anim-2">
         <div class="mode-icon">🎯</div>
         <div class="mode-title">The Edge</div>
-        <div class="mode-desc">Arbitrage detection & +EV bets across FanDuel, DraftKings, and Hard Rock.</div>
+        <div class="mode-desc">Arbitrage & +EV bets across FanDuel, DraftKings, Hard Rock & PrizePicks.</div>
     </div>
     </a>
     """, unsafe_allow_html=True)
@@ -384,22 +384,24 @@ h1, h2 = st.columns(2)
 with h1:
     st.markdown("""
     <div class="algo-card">
-        <div class="algo-title">📈 Stocks — RAG Scoring Engine</div>
+        <div class="algo-title">📈 Stocks — Hot Stock Screener</div>
         <div class="algo-text">
-            We pull live data from <strong>yfinance</strong> for 20+ stocks, then use a
-            <strong>vector database (ChromaDB)</strong> to find the most relevant financial news
-            for each stock. The algorithm scores each stock out of 100 by combining:<br><br>
-            • <strong>Momentum</strong> — Is the stock trending up or down over 30 days?<br>
-            • <strong>Risk alignment</strong> — Does the stock's volatility (beta) match your tolerance?<br>
-            • <strong>Value</strong> — Is the P/E ratio reasonable, or overvalued?<br>
-            • <strong>News sentiment</strong> — Are recent headlines bullish or bearish?<br>
-            • <strong>Dividends</strong> — Bonus points for conservative investors seeking income.<br><br>
-            The final score determines the ranking — the higher the score, the stronger the buy signal.
+            We screen 20+ stocks using a <strong>proven multi-factor formula</strong>, powered by
+            <strong>ChromaDB</strong> RAG for news sentiment. Each stock is scored out of 100:<br><br>
+            • <strong>P/E Ratio &lt; 30</strong> — Only reasonably valued stocks pass<br>
+            • <strong>ROE &gt; 25%</strong> — High return on equity = efficient management<br>
+            • <strong>EPS Positive</strong> — Must be profitable<br>
+            • <strong>Profit Growth &gt; 50%</strong> — Earnings accelerating fast<br>
+            • <strong>Revenue Growth &gt; 50%</strong> — Sales momentum<br>
+            • <strong>Debt/Equity &lt; 0.5</strong> — Low leverage, financially healthy<br>
+            • <strong>Insider Holding &gt; 50%</strong> — Management has skin in the game<br>
+            • <strong>Price &gt; EMA 200</strong> — Long-term uptrend confirmed<br>
         </div>
-        <span class="algo-tag">ChromaDB</span>
-        <span class="algo-tag">yfinance</span>
-        <span class="algo-tag">Cosine Similarity</span>
-        <span class="algo-tag">Multi-Factor Scoring</span>
+        <span class="algo-tag">PE &lt; 30</span>
+        <span class="algo-tag">ROE</span>
+        <span class="algo-tag">EMA 200</span>
+        <span class="algo-tag">D/E Ratio</span>
+        <span class="algo-tag">ChromaDB RAG</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -408,8 +410,8 @@ with h2:
     <div class="algo-card">
         <div class="algo-title">🎯 The Edge — Arbitrage & Expected Value</div>
         <div class="algo-text">
-            We pull <strong>live odds</strong> from The Odds API across FanDuel, DraftKings, and Hard Rock Bet.
-            Two algorithms run simultaneously:<br><br>
+            We pull <strong>live odds</strong> from The Odds API across FanDuel, DraftKings, Hard Rock Bet,
+            and <strong>PrizePicks</strong>. Two algorithms run simultaneously:<br><br>
             <strong>Arbitrage Scanner:</strong> When two sportsbooks disagree enough, the combined implied
             probability drops below 100%. You bet both sides and <strong>guarantee profit</strong> regardless
             of outcome.<br><br>
@@ -419,6 +421,7 @@ with h2:
         </div>
         <span class="algo-tag">Implied Probability</span>
         <span class="algo-tag">Kelly Criterion</span>
+        <span class="algo-tag">PrizePicks</span>
         <span class="algo-tag">Live Odds API</span>
     </div>
     """, unsafe_allow_html=True)

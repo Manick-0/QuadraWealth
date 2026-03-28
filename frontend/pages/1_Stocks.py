@@ -11,10 +11,11 @@ import os
 
 # Add project root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from frontend.components import inject_custom_css, render_metric_card, render_score_badge, api_get, api_post
+from frontend.components import inject_custom_css, render_metric_card, render_score_badge, api_get, api_post, render_home_button
 
 st.set_page_config(page_title="QuadraWealth — Stocks", page_icon="📈", layout="wide")
 inject_custom_css()
+render_home_button()
 
 # ── Header ──
 st.markdown('<div class="glow-header">📈 Stocks — Equity Manager</div>', unsafe_allow_html=True)

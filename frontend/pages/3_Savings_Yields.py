@@ -10,10 +10,11 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from frontend.components import inject_custom_css, render_metric_card, api_get, api_post
+from frontend.components import inject_custom_css, render_metric_card, api_get, api_post, render_home_button
 
 st.set_page_config(page_title="QuadraWealth — Savings & Yields", page_icon="🏦", layout="wide")
 inject_custom_css()
+render_home_button()
 
 # ── Header ──
 st.markdown('<div class="glow-header">🏦 Savings & Yields</div>', unsafe_allow_html=True)

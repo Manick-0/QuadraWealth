@@ -10,14 +10,15 @@ import sys
 import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from frontend.components import inject_custom_css, render_metric_card, api_get
+from frontend.components import inject_custom_css, render_metric_card, api_get, render_home_button
 
 st.set_page_config(page_title="QuadraWealth — The Edge", page_icon="🎯", layout="wide")
 inject_custom_css()
+render_home_button()
 
 # ── Header ──
 st.markdown('<div class="glow-header">🎯 The Edge — Arbitrage & +EV Finder</div>', unsafe_allow_html=True)
-st.caption("Compare lines across FanDuel, DraftKings & Hard Rock Bet • NBA • NFL • MLB • T20 Cricket")
+st.caption("Compare lines across FanDuel, DraftKings, Hard Rock Bet & PrizePicks • NBA • NFL • MLB • T20 Cricket")
 st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
 
 # ── Sidebar ──

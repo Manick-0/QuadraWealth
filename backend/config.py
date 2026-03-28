@@ -44,6 +44,7 @@ class Settings(BaseSettings):
         "fanduel",
         "draftkings",
         "hardrockbet",
+        "prizepicks",
     ]
     ODDS_API_SPORTS: list[str] = [
         "basketball_nba",

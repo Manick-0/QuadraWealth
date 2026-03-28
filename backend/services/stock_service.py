@@ -158,137 +158,143 @@ def get_recommendations(
             try:
                 t = yf.Ticker(ticker)
                 info = t.info
-                hist = t.history(period="3mo")
+                hist = t.history(period="1y")
 
-                if hist.empty or len(hist) < 5:
+                if hist.empty or len(hist) < 20:
                     continue
 
                 current_price = float(hist["Close"].iloc[-1])
                 month_start = float(hist["Close"].iloc[0])
                 momentum = (current_price - month_start) / month_start * 100
 
-                # ── Enhanced Scoring Algorithm ──
-                score = 50  # Base score
+                # ── Hot Stock Screening Formula ──
+                score = 40  # Base score
                 signals = []
 
                 # 1. Sector match bonus
-                score += 8
+                score += 5
                 signals.append("sector_match")
 
-                # 2. Multi-period momentum
-                if len(hist) >= 20:
-                    short_momentum = (current_price - float(hist["Close"].iloc[-5])) / float(hist["Close"].iloc[-5]) * 100
-                else:
-                    short_momentum = momentum
-
-                if momentum > 8 and short_momentum > 0:
-                    score += 15
-                    signals.append("strong_momentum")
-                elif momentum > 3:
-                    score += 10
-                    signals.append("positive_momentum")
-                elif momentum > 0:
-                    score += 5
-                    signals.append("mild_uptrend")
-                elif momentum < -8:
-                    score -= 12
-                    signals.append("negative_momentum")
-                elif momentum < 0:
-                    score -= 5
-                    signals.append("mild_downtrend")
-
-                # 3. Risk alignment
-                pe = _safe_get(info, "trailingPE", 20)
-                beta = _safe_get(info, "beta", 1.0)
-                if risk_tolerance == "conservative" and beta and beta < 1.0:
-                    score += 10
-                    signals.append("low_volatility")
-                elif risk_tolerance == "aggressive" and beta and beta > 1.2:
-                    score += 10
-                    signals.append("high_growth_potential")
-                elif risk_tolerance == "moderate" and beta and 0.8 <= beta <= 1.3:
-                    score += 7
-                    signals.append("balanced_risk")
-
-                # 4. Value check (P/E analysis)
+                # 2. P/E Ratio < 30 (value check)
+                pe = _safe_get(info, "trailingPE")
                 if pe and pe > 0:
                     if pe < 15:
-                        score += 10
-                        signals.append("deep_value")
-                    elif pe < 25:
-                        score += 6
-                        signals.append("value_play")
+                        score += 12
+                        signals.append("deep_value_pe")
+                    elif pe < 30:
+                        score += 8
+                        signals.append("pe_under_30")
                     elif pe > 50:
                         score -= 8
                         signals.append("high_valuation")
-                    elif pe > 35:
-                        score -= 3
-                        signals.append("elevated_valuation")
 
-                # 5. News sentiment boost (RAG-powered)
-                if sector_sentiment == "bullish":
+                # 3. ROE > 25% (Return on Equity)
+                roe = _safe_get(info, "returnOnEquity")
+                if roe and roe > 0.25:
                     score += 12
+                    signals.append("strong_roe")
+                elif roe and roe > 0.15:
+                    score += 5
+                    signals.append("decent_roe")
+
+                # 4. EPS Positive
+                eps = _safe_get(info, "trailingEps")
+                if eps and eps > 0:
+                    score += 6
+                    signals.append("positive_eps")
+                elif eps and eps < 0:
+                    score -= 10
+                    signals.append("negative_eps")
+
+                # 5. Profit Growth > 50% (earnings growth)
+                earnings_growth = _safe_get(info, "earningsGrowth")
+                if earnings_growth and earnings_growth > 0.5:
+                    score += 12
+                    signals.append("profit_growth_50pct")
+                elif earnings_growth and earnings_growth > 0.2:
+                    score += 6
+                    signals.append("solid_profit_growth")
+
+                # 6. Sales/Revenue Growth > 50%
+                rev_growth = _safe_get(info, "revenueGrowth")
+                if rev_growth and rev_growth > 0.5:
+                    score += 10
+                    signals.append("sales_growth_50pct")
+                elif rev_growth and rev_growth > 0.2:
+                    score += 5
+                    signals.append("solid_rev_growth")
+
+                # 7. Debt to Equity < 0.5
+                de_ratio = _safe_get(info, "debtToEquity")
+                if de_ratio is not None:
+                    de_val = de_ratio / 100 if de_ratio > 5 else de_ratio  # yfinance sometimes returns as %
+                    if de_val < 0.5:
+                        score += 10
+                        signals.append("low_debt")
+                    elif de_val > 2.0:
+                        score -= 5
+                        signals.append("high_debt")
+
+                # 8. Insider/Promoter holding > 50%
+                insider_pct = _safe_get(info, "heldPercentInsiders")
+                if insider_pct and insider_pct > 0.5:
+                    score += 8
+                    signals.append("high_insider_holding")
+                elif insider_pct and insider_pct > 0.2:
+                    score += 4
+                    signals.append("moderate_insider_holding")
+
+                # 9. EMA 200 Check — price above 200-day EMA = bullish
+                if len(hist) >= 200:
+                    ema_200 = hist["Close"].ewm(span=200, adjust=False).mean().iloc[-1]
+                    if current_price > float(ema_200):
+                        score += 10
+                        signals.append("above_ema200")
+                    else:
+                        score -= 5
+                        signals.append("below_ema200")
+                elif len(hist) >= 50:
+                    ema_50 = hist["Close"].ewm(span=50, adjust=False).mean().iloc[-1]
+                    if current_price > float(ema_50):
+                        score += 6
+                        signals.append("above_ema50")
+
+                # 10. News sentiment boost (RAG-powered)
+                if sector_sentiment == "bullish":
+                    score += 8
                     signals.append("positive_news_sentiment")
                 elif sector_sentiment == "bearish":
-                    score -= 8
+                    score -= 5
                     signals.append("cautious_news_sentiment")
 
-                # 6. Dividend check
+                # 11. Dividend bonus for conservative investors
                 div_yield = _safe_get(info, "dividendYield", 0) or 0
                 if risk_tolerance == "conservative" and div_yield > 0.02:
-                    score += 8
-                    signals.append("dividend_payer")
-                elif div_yield > 0.04:
                     score += 5
-                    signals.append("high_dividend")
-
-                # 7. 52-week proximity analysis
-                w52_high = _safe_get(info, "fiftyTwoWeekHigh")
-                w52_low = _safe_get(info, "fiftyTwoWeekLow")
-                if w52_high and w52_low and w52_high > w52_low:
-                    range_pct = (current_price - w52_low) / (w52_high - w52_low)
-                    if range_pct < 0.3:
-                        score += 8
-                        signals.append("near_52w_low")
-                    elif range_pct > 0.9:
-                        score -= 4
-                        signals.append("near_52w_high")
-
-                # 8. Volatility analysis (simple Sharpe-like)
-                if len(hist) >= 20:
-                    daily_returns = hist["Close"].pct_change().dropna()
-                    volatility = float(daily_returns.std()) * (252 ** 0.5)  # Annualized
-                    if volatility < 0.25:
-                        score += 5
-                        signals.append("low_vol")
-                    elif volatility > 0.6:
-                        if risk_tolerance != "aggressive":
-                            score -= 5
-                            signals.append("high_vol")
-
-                # 9. Volume spike detection
-                avg_vol = _safe_get(info, "averageVolume", 0) or 0
-                if avg_vol > 0 and len(hist) >= 5:
-                    recent_vol = float(hist["Volume"].iloc[-5:].mean())
-                    if recent_vol > avg_vol * 1.5:
-                        score += 5
-                        signals.append("volume_surge")
+                    signals.append("dividend_payer")
 
                 score = max(0, min(100, score))
+                beta = _safe_get(info, "beta", 1.0)
 
-                # Build rich reasoning from RAG context
+                # Build rich reasoning
                 news_summary = "; ".join([n["text"][:80] + "..." for n in news_context[:2]])
                 reasoning_parts = [f"Composite score: {score}/100."]
-                reasoning_parts.append(f"3-month momentum: {momentum:+.1f}%.")
-                reasoning_parts.append(f"Sector outlook: {sector_sentiment}.")
                 if pe and pe > 0:
-                    reasoning_parts.append(f"P/E ratio: {pe:.1f}.")
-                if beta:
-                    reasoning_parts.append(f"Beta: {beta:.2f}.")
-                if div_yield > 0:
-                    reasoning_parts.append(f"Dividend yield: {div_yield*100:.2f}%.")
+                    reasoning_parts.append(f"P/E: {pe:.1f} ({'✅ <30' if pe < 30 else '⚠️ >30'}).")
+                if roe:
+                    reasoning_parts.append(f"ROE: {roe*100:.1f}% ({'✅ >25%' if roe > 0.25 else ''}).")
+                if eps:
+                    reasoning_parts.append(f"EPS: ${eps:.2f} ({'✅' if eps > 0 else '❌'}).")
+                if earnings_growth:
+                    reasoning_parts.append(f"Profit growth: {earnings_growth*100:.0f}%.")
+                if rev_growth:
+                    reasoning_parts.append(f"Revenue growth: {rev_growth*100:.0f}%.")
+                if de_ratio is not None:
+                    de_display = de_ratio / 100 if de_ratio > 5 else de_ratio
+                    reasoning_parts.append(f"D/E: {de_display:.2f} ({'✅ <0.5' if de_display < 0.5 else ''}).")
+                reasoning_parts.append(f"Sector outlook: {sector_sentiment}.")
                 if news_summary:
-                    reasoning_parts.append(f"News context: {news_summary}")
+                    reasoning_parts.append(f"News: {news_summary}")
 
                 reasoning = " ".join(reasoning_parts)
                 risk_level = "low" if beta and beta < 0.8 else ("high" if beta and beta > 1.3 else "medium")

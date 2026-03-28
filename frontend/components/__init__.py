@@ -6,6 +6,21 @@ import os
 import streamlit as st
 
 
+def render_home_button():
+    """Render a Home navigation button at the top of each page."""
+    st.markdown("""
+    <a href="/" target="_self" style="text-decoration:none;">
+        <div style="display:inline-flex; align-items:center; gap:6px; padding:6px 16px;
+            background:rgba(0,212,170,0.08); border:1px solid rgba(0,212,170,0.2);
+            border-radius:10px; margin-bottom:1rem; transition:all 0.3s ease; cursor:pointer;"
+            onmouseover="this.style.borderColor='rgba(0,212,170,0.5)'; this.style.background='rgba(0,212,170,0.15)';"
+            onmouseout="this.style.borderColor='rgba(0,212,170,0.2)'; this.style.background='rgba(0,212,170,0.08)';">
+            <span style="font-size:1rem;">🏠</span>
+            <span style="color:#00D4AA; font-weight:600; font-size:0.85rem;">Home</span>
+        </div>
+    </a>
+    """, unsafe_allow_html=True)
+
 def setup_page(title: str, icon: str = "💎"):
     """Standard page configuration."""
     st.set_page_config(
@@ -231,6 +246,7 @@ def render_bookmaker_badge(bookmaker: str) -> str:
         "FanDuel": ("#1A73E8", "book-fanduel"),
         "DraftKings": ("#53D769", "book-draftkings"),
         "Hard Rock Bet": ("#FF8C00", "book-hardrockbet"),
+        "PrizePicks": ("#7B2FBE", "book-prizepicks"),
     }
     color, cls = colors.get(bookmaker, ("#FAFAFA", ""))
     return f'<span class="{cls}">{bookmaker}</span>'

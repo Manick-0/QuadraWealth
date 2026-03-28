@@ -17,11 +17,11 @@ from backend.models.schemas import (
 
 # ─── Sector mapping for RAG queries ─────────────────────
 SECTOR_MAP = {
-    "tech": ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "AMD", "NFLX", "CRM"],
-    "finance": ["JPM", "V", "BAC", "GS", "MA", "BRK-B", "C", "WFC"],
-    "healthcare": ["JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY", "TMO"],
-    "consumer": ["PG", "HD", "KO", "DIS", "NKE", "MCD", "SBUX", "COST"],
-    "energy": ["XOM", "CVX", "COP", "SLB", "EOG"],
+    "tech": ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "AMD", "NFLX"],
+    "finance": ["JPM", "V", "BAC"],
+    "healthcare": ["JNJ", "UNH", "PFE"],
+    "consumer": ["PG", "HD", "KO", "DIS"],
+    "energy": ["XOM"],
 }
 
 RISK_VOLATILITY_MAP = {
@@ -103,7 +103,7 @@ def get_market_overview() -> dict:
 
     # Fetch watchlist quotes
     quotes = []
-    for ticker in settings.DEFAULT_WATCHLIST[:15]:  # Expanded for paid tier
+    for ticker in settings.DEFAULT_WATCHLIST[:10]:  # Limit for speed
         q = get_stock_quote(ticker)
         if q:
             quotes.append(q)
@@ -154,37 +154,48 @@ def get_recommendations(
             "bearish" if bearish_count > bullish_count else "neutral"
         )
 
-        for ticker in tickers[:5]:  # Top 5 per sector (paid tier)
+        for ticker in tickers[:4]:  # Top 4 per sector for richer results
             try:
                 t = yf.Ticker(ticker)
                 info = t.info
-                hist = t.history(period="1mo")
+                hist = t.history(period="3mo")
 
-                if hist.empty:
+                if hist.empty or len(hist) < 5:
                     continue
 
                 current_price = float(hist["Close"].iloc[-1])
                 month_start = float(hist["Close"].iloc[0])
                 momentum = (current_price - month_start) / month_start * 100
 
-                # ── Scoring algorithm ──
+                # ── Enhanced Scoring Algorithm ──
                 score = 50  # Base score
                 signals = []
 
                 # 1. Sector match bonus
-                score += 10
+                score += 8
                 signals.append("sector_match")
 
-                # 2. Momentum
-                if momentum > 5:
+                # 2. Multi-period momentum
+                if len(hist) >= 20:
+                    short_momentum = (current_price - float(hist["Close"].iloc[-5])) / float(hist["Close"].iloc[-5]) * 100
+                else:
+                    short_momentum = momentum
+
+                if momentum > 8 and short_momentum > 0:
                     score += 15
                     signals.append("strong_momentum")
-                elif momentum > 0:
-                    score += 8
+                elif momentum > 3:
+                    score += 10
                     signals.append("positive_momentum")
-                elif momentum < -5:
-                    score -= 10
+                elif momentum > 0:
+                    score += 5
+                    signals.append("mild_uptrend")
+                elif momentum < -8:
+                    score -= 12
                     signals.append("negative_momentum")
+                elif momentum < 0:
+                    score -= 5
+                    signals.append("mild_downtrend")
 
                 # 3. Risk alignment
                 pe = _safe_get(info, "trailingPE", 20)
@@ -195,18 +206,26 @@ def get_recommendations(
                 elif risk_tolerance == "aggressive" and beta and beta > 1.2:
                     score += 10
                     signals.append("high_growth_potential")
-                elif risk_tolerance == "moderate":
-                    score += 5
+                elif risk_tolerance == "moderate" and beta and 0.8 <= beta <= 1.3:
+                    score += 7
+                    signals.append("balanced_risk")
 
-                # 4. Value check
-                if pe and pe < 20:
-                    score += 8
-                    signals.append("value_play")
-                elif pe and pe > 40:
-                    score -= 5
-                    signals.append("high_valuation")
+                # 4. Value check (P/E analysis)
+                if pe and pe > 0:
+                    if pe < 15:
+                        score += 10
+                        signals.append("deep_value")
+                    elif pe < 25:
+                        score += 6
+                        signals.append("value_play")
+                    elif pe > 50:
+                        score -= 8
+                        signals.append("high_valuation")
+                    elif pe > 35:
+                        score -= 3
+                        signals.append("elevated_valuation")
 
-                # 5. News sentiment boost
+                # 5. News sentiment boost (RAG-powered)
                 if sector_sentiment == "bullish":
                     score += 12
                     signals.append("positive_news_sentiment")
@@ -214,51 +233,64 @@ def get_recommendations(
                     score -= 8
                     signals.append("cautious_news_sentiment")
 
-                # 6. Dividend bonus for conservative
+                # 6. Dividend check
                 div_yield = _safe_get(info, "dividendYield", 0) or 0
                 if risk_tolerance == "conservative" and div_yield > 0.02:
                     score += 8
                     signals.append("dividend_payer")
+                elif div_yield > 0.04:
+                    score += 5
+                    signals.append("high_dividend")
 
-                # 7. RSI — Relative Strength Index (14-day)
-                if len(hist) >= 14:
-                    delta_prices = hist["Close"].diff()
-                    gains = delta_prices.where(delta_prices > 0, 0).rolling(14).mean()
-                    losses = (-delta_prices.where(delta_prices < 0, 0)).rolling(14).mean()
-                    rs = gains.iloc[-1] / losses.iloc[-1] if losses.iloc[-1] != 0 else 100
-                    rsi = 100 - (100 / (1 + rs))
-                    if 40 <= rsi <= 60:
-                        score += 6
-                        signals.append("neutral_rsi")
-                    elif rsi < 30:
-                        score += 10
-                        signals.append("oversold")
-                    elif rsi > 70:
-                        score -= 5
-                        signals.append("overbought")
-
-                # 8. 52-week range position
-                w52_high = _safe_get(info, "fiftyTwoWeekHigh", 0)
-                w52_low = _safe_get(info, "fiftyTwoWeekLow", 0)
-                if w52_high and w52_low and w52_high != w52_low:
-                    range_pos = (current_price - w52_low) / (w52_high - w52_low)
-                    if range_pos < 0.3:
-                        score += 7
+                # 7. 52-week proximity analysis
+                w52_high = _safe_get(info, "fiftyTwoWeekHigh")
+                w52_low = _safe_get(info, "fiftyTwoWeekLow")
+                if w52_high and w52_low and w52_high > w52_low:
+                    range_pct = (current_price - w52_low) / (w52_high - w52_low)
+                    if range_pct < 0.3:
+                        score += 8
                         signals.append("near_52w_low")
-                    elif range_pos > 0.9:
-                        score -= 3
+                    elif range_pct > 0.9:
+                        score -= 4
                         signals.append("near_52w_high")
+
+                # 8. Volatility analysis (simple Sharpe-like)
+                if len(hist) >= 20:
+                    daily_returns = hist["Close"].pct_change().dropna()
+                    volatility = float(daily_returns.std()) * (252 ** 0.5)  # Annualized
+                    if volatility < 0.25:
+                        score += 5
+                        signals.append("low_vol")
+                    elif volatility > 0.6:
+                        if risk_tolerance != "aggressive":
+                            score -= 5
+                            signals.append("high_vol")
+
+                # 9. Volume spike detection
+                avg_vol = _safe_get(info, "averageVolume", 0) or 0
+                if avg_vol > 0 and len(hist) >= 5:
+                    recent_vol = float(hist["Volume"].iloc[-5:].mean())
+                    if recent_vol > avg_vol * 1.5:
+                        score += 5
+                        signals.append("volume_surge")
 
                 score = max(0, min(100, score))
 
-                # Build reasoning from RAG context
+                # Build rich reasoning from RAG context
                 news_summary = "; ".join([n["text"][:80] + "..." for n in news_context[:2]])
-                reasoning = f"Score {score}/100 for {ticker}. Sector outlook: {sector_sentiment}. "
+                reasoning_parts = [f"Composite score: {score}/100."]
+                reasoning_parts.append(f"3-month momentum: {momentum:+.1f}%.")
+                reasoning_parts.append(f"Sector outlook: {sector_sentiment}.")
+                if pe and pe > 0:
+                    reasoning_parts.append(f"P/E ratio: {pe:.1f}.")
+                if beta:
+                    reasoning_parts.append(f"Beta: {beta:.2f}.")
+                if div_yield > 0:
+                    reasoning_parts.append(f"Dividend yield: {div_yield*100:.2f}%.")
                 if news_summary:
-                    reasoning += f"Key context: {news_summary}"
-                else:
-                    reasoning += f"1-month momentum: {momentum:.1f}%."
+                    reasoning_parts.append(f"News context: {news_summary}")
 
+                reasoning = " ".join(reasoning_parts)
                 risk_level = "low" if beta and beta < 0.8 else ("high" if beta and beta > 1.3 else "medium")
 
                 recommendations.append({

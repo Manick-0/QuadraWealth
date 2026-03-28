@@ -1,0 +1,24 @@
+[[pages]]
+path = "app.py"
+name = "Home"
+icon = "💎"
+
+[[pages]]
+path = "pages/1_Stocks.py"
+name = "Stocks"
+icon = "📈"
+
+[[pages]]
+path = "pages/2_The_Edge.py"
+name = "The Edge"
+icon = "🎯"
+
+[[pages]]
+path = "pages/3_Savings_Yields.py"
+name = "Savings Yields"
+icon = "🏦"
+
+[[pages]]
+path = "pages/4_Real_Estate.py"
+name = "Real Estate"
+icon = "🏠"

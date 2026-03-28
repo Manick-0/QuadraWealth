@@ -149,13 +149,10 @@ def inject_custom_css():
         border: none !important;
     }
 
-    /* Hide Streamlit branding but KEEP sidebar toggle */
+    /* Hide ALL Streamlit branding and chrome */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header[data-testid="stHeader"] {
-        background: transparent !important;
-        border-bottom: none !important;
-    }
+    header[data-testid="stHeader"] {display: none !important;}
     div[data-testid="stToolbar"] {display: none !important;}
     div[data-testid="stDecoration"] {display: none !important;}
     div[data-testid="stStatusWidget"] {display: none !important;}
@@ -163,14 +160,6 @@ def inject_custom_css():
     #stDecoration {display: none !important;}
     .viewerBadge_container__r5tak {display: none !important;}
     .styles_viewerBadge__CvC9N {display: none !important;}
-
-    /* Style the sidebar toggle */
-    [data-testid="collapsedControl"] {
-        color: #00D4AA !important;
-    }
-    button[kind="header"] {
-        color: #00D4AA !important;
-    }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }

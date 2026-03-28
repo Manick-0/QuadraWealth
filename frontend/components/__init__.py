@@ -149,10 +149,13 @@ def inject_custom_css():
         border: none !important;
     }
 
-    /* Hide ALL Streamlit branding and chrome */
+    /* Hide Streamlit branding but KEEP sidebar toggle */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header[data-testid="stHeader"] {display: none !important;}
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+        border-bottom: none !important;
+    }
     div[data-testid="stToolbar"] {display: none !important;}
     div[data-testid="stDecoration"] {display: none !important;}
     div[data-testid="stStatusWidget"] {display: none !important;}
@@ -161,33 +164,12 @@ def inject_custom_css():
     .viewerBadge_container__r5tak {display: none !important;}
     .styles_viewerBadge__CvC9N {display: none !important;}
 
-    /* Fix sidebar collapse button showing "keyboard_double" text */
-    button[kind="header"] span,
-    [data-testid="collapsedControl"] span {
-        font-size: 0 !important;
-        visibility: hidden;
+    /* Style the sidebar toggle */
+    [data-testid="collapsedControl"] {
+        color: #00D4AA !important;
     }
-    button[kind="header"] svg,
-    [data-testid="collapsedControl"] svg {
-        visibility: visible !important;
-    }
-    /* Rename 'app' to 'App' — capitalize sidebar nav links */
-    [data-testid="stSidebarNav"] li:first-child a span {
-        font-size: 0;
-    }
-    [data-testid="stSidebarNav"] li:first-child a span::after {
-        content: "App";
-        font-size: 14px;
-        visibility: visible;
-    }
-
-    /* Apple-style slide animations */
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(40px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .main .block-container {
-        animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    button[kind="header"] {
+        color: #00D4AA !important;
     }
 
     /* Scrollbar */

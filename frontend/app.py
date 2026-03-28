@@ -2,6 +2,7 @@
 QuadraWealth — Main Landing Page
 Streamlit multi-page app entry point.
 """
+import os
 import streamlit as st
 
 st.set_page_config(
@@ -11,57 +12,51 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Premium CSS with Apple-style animations ──
+# Custom CSS with Apple-style animations
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 * { font-family: 'Inter', sans-serif !important; }
 
-/* Hide Streamlit branding (safe — won't break sidebar) */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-div[data-testid="stToolbar"] {display: none !important;}
-.stDeployButton {display: none !important;}
-.viewerBadge_container__r5tak {display: none !important;}
-.styles_viewerBadge__CvC9N {display: none !important;}
-
 .main .block-container {
     padding-top: 2rem;
     max-width: 1200px;
 }
 
-/* ── Apple-style Animations ── */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(40px); }
+/* ── Apple-style slide-in animations ── */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(60px); }
     to { opacity: 1; transform: translateY(0); }
 }
-@keyframes fadeInLeft {
-    from { opacity: 0; transform: translateX(-40px); }
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-80px); }
     to { opacity: 1; transform: translateX(0); }
 }
-@keyframes fadeInRight {
-    from { opacity: 0; transform: translateX(40px); }
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(80px); }
     to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.9); }
+    from { opacity: 0; transform: scale(0.85); }
     to { opacity: 1; transform: scale(1); }
 }
 @keyframes shimmer {
     0% { background-position: -200% center; }
     100% { background-position: 200% center; }
 }
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 170, 0.1); }
+    50% { box-shadow: 0 0 40px rgba(0, 212, 170, 0.25); }
 }
 
 /* Hero */
 .hero-title {
-    background: linear-gradient(135deg, #00D4AA 0%, #00B4D8 30%, #7B68EE 60%, #00D4AA 100%);
-    background-size: 300% 300%;
+    background: linear-gradient(135deg, #00D4AA 0%, #00B4D8 50%, #7B68EE 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 4.5rem;
@@ -69,24 +64,24 @@ div[data-testid="stToolbar"] {display: none !important;}
     text-align: center;
     margin-bottom: 0;
     line-height: 1.1;
-    animation: fadeInUp 1s ease-out, gradientShift 6s ease infinite;
+    animation: scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .hero-subtitle {
     color: rgba(250, 250, 250, 0.6);
-    font-size: 1.3rem;
+    font-size: 1.35rem;
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 0.8rem;
     font-weight: 300;
-    animation: fadeInUp 1s ease-out 0.2s both;
+    animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
 
-/* Stats */
+/* Stats row */
 .stat-row {
     display: flex;
     justify-content: center;
     gap: 3rem;
     margin: 2.5rem 0;
-    animation: fadeInUp 1s ease-out 0.4s both;
+    animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .stat-item { text-align: center; }
 .stat-value {
@@ -96,107 +91,124 @@ div[data-testid="stToolbar"] {display: none !important;}
 }
 .stat-label {
     font-size: 0.75rem;
-    color: rgba(250,250,250,0.4);
+    color: rgba(250,250,250,0.5);
     text-transform: uppercase;
     letter-spacing: 0.12em;
     margin-top: 4px;
 }
 
-/* Mode Cards */
+/* Mode cards — staggered slide-in */
 .mode-card {
     background: linear-gradient(135deg, #1A1F2E 0%, #252B3B 100%);
     border: 1px solid rgba(0, 212, 170, 0.12);
     border-radius: 20px;
     padding: 2rem 1.5rem;
     text-align: center;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    min-height: 260px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    animation: scaleIn 0.6s ease-out both;
+    animation: pulseGlow 4s ease-in-out infinite;
 }
-.mode-card:nth-child(1) { animation-delay: 0.5s; }
-.mode-card:nth-child(2) { animation-delay: 0.65s; }
-.mode-card:nth-child(3) { animation-delay: 0.8s; }
-.mode-card:nth-child(4) { animation-delay: 0.95s; }
+.card-1 { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both; }
+.card-2 { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both; }
+.card-3 { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both; }
+.card-4 { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.85s both; }
 
 .mode-card:hover {
     border-color: rgba(0, 212, 170, 0.5);
-    box-shadow: 0 16px 48px rgba(0, 212, 170, 0.12);
-    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0, 212, 170, 0.15);
+    transform: translateY(-8px) scale(1.02);
 }
-.mode-icon { font-size: 2.8rem; margin-bottom: 1rem; }
-.mode-title { font-size: 1.3rem; font-weight: 700; color: #FAFAFA; margin-bottom: 0.5rem; }
-.mode-desc { color: rgba(250, 250, 250, 0.45); font-size: 0.85rem; line-height: 1.6; }
+.mode-icon { font-size: 3rem; margin-bottom: 1rem; }
+.mode-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #FAFAFA;
+    margin-bottom: 0.5rem;
+}
+.mode-desc {
+    color: rgba(250, 250, 250, 0.5);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
 
-/* Algorithm Section */
+/* Algorithm explanation section */
 .algo-section {
-    animation: fadeInUp 0.8s ease-out both;
-    margin: 1rem 0;
+    animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.0s both;
 }
 .algo-card {
     background: linear-gradient(135deg, #141824 0%, #1A1F2E 100%);
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(0, 212, 170, 0.08);
     border-radius: 16px;
     padding: 1.8rem;
-    margin: 0.8rem 0;
+    margin: 1rem 0;
     transition: all 0.3s ease;
 }
 .algo-card:hover {
-    border-color: rgba(0, 212, 170, 0.2);
-    transform: translateX(4px);
+    border-color: rgba(0, 212, 170, 0.25);
+    transform: translateX(6px);
+}
+.algo-number {
+    display: inline-block;
+    background: linear-gradient(135deg, #00D4AA, #00B4D8);
+    color: #0E1117;
+    font-weight: 800;
+    font-size: 0.85rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    margin-right: 10px;
 }
 .algo-title {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #00D4AA;
-    margin-bottom: 0.5rem;
+    color: #FAFAFA;
+    display: inline;
 }
-.algo-body {
-    color: rgba(250,250,250,0.6);
+.algo-desc {
+    color: rgba(250,250,250,0.55);
     font-size: 0.9rem;
-    line-height: 1.7;
-}
-.algo-tag {
-    display: inline-block;
-    background: rgba(0, 212, 170, 0.1);
-    color: #00D4AA;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-right: 6px;
     margin-top: 8px;
-    letter-spacing: 0.05em;
+    line-height: 1.6;
+    padding-left: 38px;
 }
 
-/* Divider */
+/* Dividers */
 .divider {
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.3), transparent);
     margin: 2rem 0;
 }
 
-/* Footer */
-.footer-credits {
+/* Footer / credit */
+.footer-section {
     text-align: center;
-    padding: 2.5rem 0 1rem;
-    animation: fadeInUp 1s ease-out 1.5s both;
+    padding: 3rem 0 1.5rem;
+    animation: fadeIn 1s ease 1.5s both;
 }
 .footer-hackusf {
     color: rgba(250,250,250,0.3);
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
     font-weight: 500;
 }
 .footer-author {
     color: #00D4AA;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     margin-top: 6px;
+}
+.footer-tagline {
+    color: rgba(250,250,250,0.2);
+    font-size: 0.75rem;
+    margin-top: 8px;
+    font-style: italic;
 }
 
 /* Sidebar */
@@ -204,6 +216,18 @@ section[data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0E1117 0%, #141824 100%);
     border-right: 1px solid rgba(0, 212, 170, 0.1);
 }
+
+/* Hide ALL Streamlit branding and chrome */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header[data-testid="stHeader"] {display: none !important;}
+div[data-testid="stToolbar"] {display: none !important;}
+div[data-testid="stDecoration"] {display: none !important;}
+div[data-testid="stStatusWidget"] {display: none !important;}
+.stDeployButton {display: none !important;}
+#stDecoration {display: none !important;}
+.viewerBadge_container__r5tak {display: none !important;}
+.styles_viewerBadge__CvC9N {display: none !important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -239,7 +263,6 @@ with st.sidebar:
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
     st.markdown("#### System Status")
-    import os
     import requests as _req
     _backend = "http://localhost:8000"
     try:
@@ -262,7 +285,6 @@ st.markdown(
     '<div class="hero-subtitle">Four modes. One platform. Total capital control.</div>',
     unsafe_allow_html=True,
 )
-
 st.markdown("")
 
 # ── Stats Row ──
@@ -294,7 +316,7 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.markdown("""
-    <div class="mode-card">
+    <div class="mode-card card-1">
         <div class="mode-icon">📈</div>
         <div class="mode-title">Stocks</div>
         <div class="mode-desc">AI-powered equity recommendations with real-time market data and RAG analysis.</div>
@@ -303,7 +325,7 @@ with col1:
 
 with col2:
     st.markdown("""
-    <div class="mode-card">
+    <div class="mode-card card-2">
         <div class="mode-icon">🎯</div>
         <div class="mode-title">The Edge</div>
         <div class="mode-desc">Arbitrage detection & +EV bets across FanDuel, DraftKings, and Hard Rock.</div>
@@ -312,7 +334,7 @@ with col2:
 
 with col3:
     st.markdown("""
-    <div class="mode-card">
+    <div class="mode-card card-3">
         <div class="mode-icon">🏦</div>
         <div class="mode-title">Savings & Yields</div>
         <div class="mode-desc">Dynamic yield finder powered by macroeconomic triggers and risk profiling.</div>
@@ -321,7 +343,7 @@ with col3:
 
 with col4:
     st.markdown("""
-    <div class="mode-card">
+    <div class="mode-card card-4">
         <div class="mode-icon">🏠</div>
         <div class="mode-title">Real Estate</div>
         <div class="mode-desc">Property screener with cap rate, cash-on-cash, and goal-based scoring.</div>
@@ -332,121 +354,68 @@ st.markdown("")
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
 # ── How It Works — Algorithm Explanations ──
+st.markdown('<div class="algo-section">', unsafe_allow_html=True)
+st.markdown("### How It Works")
+st.caption("Each module uses a specialized algorithm to surface the best opportunities. Here's what's happening under the hood.")
+
 st.markdown("""
-<div style="text-align:center; animation: fadeInUp 0.8s ease-out 1s both;">
-    <div style="font-size:1.8rem; font-weight:800; color:#FAFAFA; margin-bottom:0.3rem;">How It Works</div>
-    <div style="color:rgba(250,250,250,0.4); font-size:0.95rem;">The algorithms behind each mode, explained simply.</div>
+<div class="algo-card">
+    <span class="algo-number">1</span>
+    <span class="algo-title">Stocks — Multi-Signal Scoring Engine</span>
+    <div class="algo-desc">
+        We pull live price data for 25+ stocks, then score each on a 0–100 scale using <strong>six signals</strong>:
+        sector match, 1-month momentum, risk-profile alignment (beta), valuation (P/E ratio), dividend yield,
+        and RAG-powered news sentiment. ChromaDB embeds 50+ financial news articles and finds semantically
+        similar stories to gauge sector outlook. The highest-scoring stocks surface as your top picks.
+    </div>
+</div>
+
+<div class="algo-card">
+    <span class="algo-number">2</span>
+    <span class="algo-title">The Edge — Expected Value Calculator</span>
+    <div class="algo-desc">
+        Real-time odds from FanDuel, DraftKings, and Hard Rock Bet are compared line-by-line.
+        For each outcome, we calculate the <strong>consensus "true" probability</strong> by averaging implied
+        probabilities across all books, then compare it to each individual book's odds. When a book's price
+        implies a lower probability than our consensus, that's a <strong>+EV bet</strong> — a mathematical
+        edge. We also scan for <strong>arbitrage</strong>, where the combined implied probability across
+        books drops below 100%, guaranteeing profit regardless of outcome.
+    </div>
+</div>
+
+<div class="algo-card">
+    <span class="algo-number">3</span>
+    <span class="algo-title">Savings & Yields — Macro-Trigger Allocation</span>
+    <div class="algo-desc">
+        We analyze <strong>macroeconomic conditions</strong> — interest rates, inflation, GDP growth, and
+        unemployment — to dynamically shift your allocation between high-yield savings, CDs, bonds,
+        and money-market funds. When rates rise, we lean into short-term CDs. When inflation spikes,
+        we favor I-bonds and TIPS. Your risk tolerance adjusts the aggressiveness of the rebalancing.
+    </div>
+</div>
+
+<div class="algo-card">
+    <span class="algo-number">4</span>
+    <span class="algo-title">Real Estate — Goal-Based Property Scoring</span>
+    <div class="algo-desc">
+        Each property is scored on <strong>cap rate</strong> (net operating income / property price),
+        <strong>cash-on-cash return</strong> (annual pre-tax cash flow / total cash invested), and how well it
+        matches your investment goals (appreciation vs. cash flow vs. house-hack). Properties near strong
+        job markets and with low price-to-rent ratios rank highest. We screen 50+ listings and surface the
+        top-scoring opportunities for your profile.
+    </div>
 </div>
 """, unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("")
-
-left, right = st.columns(2)
-
-with left:
-    st.markdown("""
-    <div class="algo-section" style="animation-delay: 1.1s;">
-        <div class="algo-card">
-            <div class="algo-title">📈 Stocks — RAG-Powered Scoring</div>
-            <div class="algo-body">
-                We pull real-time prices from Yahoo Finance, then query our <strong>vector database</strong> (ChromaDB)
-                for the latest financial news related to each stock's sector. A scoring algorithm combines:<br><br>
-                <strong>1.</strong> One-month price momentum (trending up or down?)<br>
-                <strong>2.</strong> Risk alignment (does the stock's volatility match your tolerance?)<br>
-                <strong>3.</strong> Value metrics (is the P/E ratio attractive?)<br>
-                <strong>4.</strong> News sentiment (are headlines bullish or bearish?)<br>
-                <strong>5.</strong> Dividend yield bonus for conservative investors<br><br>
-                Each stock gets a <strong>score out of 100</strong>. The higher the score, the stronger the recommendation for your profile.
-            </div>
-            <div>
-                <span class="algo-tag">ChromaDB</span>
-                <span class="algo-tag">yfinance</span>
-                <span class="algo-tag">Momentum</span>
-                <span class="algo-tag">Sentiment</span>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="algo-section" style="animation-delay: 1.3s;">
-        <div class="algo-card">
-            <div class="algo-title">🏦 Savings — Macro-Trigger Allocation</div>
-            <div class="algo-body">
-                Instead of fixed splits, our yield allocator <strong>reacts to live economic conditions</strong>.
-                It monitors the Fed Funds Rate, inflation (CPI), and the yield curve to dynamically shift your money:<br><br>
-                <strong>Rising rates?</strong> → More in high-yield savings and short-term bonds<br>
-                <strong>Inverted yield curve?</strong> → Defensive allocation, reduce risk exposure<br>
-                <strong>Low inflation?</strong> → Shift toward growth assets and longer-term instruments<br><br>
-                Your risk tolerance adjusts the sensitivity — aggressive profiles take bigger swings, conservative ones stay steady.
-            </div>
-            <div>
-                <span class="algo-tag">Fed Rate</span>
-                <span class="algo-tag">CPI</span>
-                <span class="algo-tag">Yield Curve</span>
-                <span class="algo-tag">Dynamic</span>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-with right:
-    st.markdown("""
-    <div class="algo-section" style="animation-delay: 1.2s;">
-        <div class="algo-card">
-            <div class="algo-title">🎯 The Edge — Arbitrage & Expected Value</div>
-            <div class="algo-body">
-                We pull <strong>live odds from The Odds API</strong> across FanDuel, DraftKings, and Hard Rock Bet,
-                then run two scans:<br><br>
-                <strong>Arbitrage:</strong> If the combined implied probability across two books is under 100%,
-                you can bet both sides and <em>guarantee profit</em> regardless of who wins.<br><br>
-                <strong>+EV (Expected Value):</strong> We calculate the <em>consensus probability</em> by averaging
-                implied odds across all books. If one book's line is significantly off consensus, that's a +EV bet.
-                We size the recommended stake using the <strong>Kelly Criterion</strong> (quarter-Kelly for safety).
-            </div>
-            <div>
-                <span class="algo-tag">Odds API</span>
-                <span class="algo-tag">Arbitrage</span>
-                <span class="algo-tag">Kelly Criterion</span>
-                <span class="algo-tag">Live</span>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="algo-section" style="animation-delay: 1.4s;">
-        <div class="algo-card">
-            <div class="algo-title">🏠 Real Estate — Goal-Based Screening</div>
-            <div class="algo-body">
-                Every property gets scored based on <strong>your investment goal</strong>:<br><br>
-                <strong>Cash flow?</strong> → Prioritizes high cap rate and low price-to-rent ratio<br>
-                <strong>Appreciation?</strong> → Weights properties in high-growth zip codes<br>
-                <strong>Balanced?</strong> → Blends both metrics equally<br><br>
-                We calculate <strong>NOI</strong> (Net Operating Income), <strong>Cap Rate</strong>,
-                and <strong>Cash-on-Cash Return</strong> assuming standard financing (25% down, 7% rate).
-                Properties are ranked 0–100 based on how well they match your goal.
-            </div>
-            <div>
-                <span class="algo-tag">Cap Rate</span>
-                <span class="algo-tag">NOI</span>
-                <span class="algo-tag">Cash-on-Cash</span>
-                <span class="algo-tag">Goal Scoring</span>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
 st.markdown("")
-st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# ── Navigation ──
-st.info("Use the **sidebar** to navigate between modes.", icon="🧭")
-
-# ── Footer Credits ──
+# ── Footer / Credits ──
 st.markdown("""
-<div class="footer-credits">
-    <div class="footer-hackusf">Built for HackUSF 2026</div>
+<div class="footer-section">
+    <div class="footer-hackusf">Made for HackUSF 2026</div>
     <div class="footer-author">Made by Manik Jindal (Nick)</div>
+    <div class="footer-tagline">Four modes. Real data. Real edge.</div>
 </div>
 """, unsafe_allow_html=True)

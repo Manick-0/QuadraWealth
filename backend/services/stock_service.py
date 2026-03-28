@@ -17,11 +17,11 @@ from backend.models.schemas import (
 
 # ─── Sector mapping for RAG queries ─────────────────────
 SECTOR_MAP = {
-    "tech": ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "AMD", "NFLX"],
-    "finance": ["JPM", "V", "BAC"],
-    "healthcare": ["JNJ", "UNH", "PFE"],
-    "consumer": ["PG", "HD", "KO", "DIS"],
-    "energy": ["XOM"],
+    "tech": ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "AMD", "NFLX", "CRM"],
+    "finance": ["JPM", "V", "BAC", "GS", "MA", "BRK-B", "C", "WFC"],
+    "healthcare": ["JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY", "TMO"],
+    "consumer": ["PG", "HD", "KO", "DIS", "NKE", "MCD", "SBUX", "COST"],
+    "energy": ["XOM", "CVX", "COP", "SLB", "EOG"],
 }
 
 RISK_VOLATILITY_MAP = {
@@ -103,7 +103,7 @@ def get_market_overview() -> dict:
 
     # Fetch watchlist quotes
     quotes = []
-    for ticker in settings.DEFAULT_WATCHLIST[:10]:  # Limit for speed
+    for ticker in settings.DEFAULT_WATCHLIST[:15]:  # Expanded for paid tier
         q = get_stock_quote(ticker)
         if q:
             quotes.append(q)
@@ -154,7 +154,7 @@ def get_recommendations(
             "bearish" if bearish_count > bullish_count else "neutral"
         )
 
-        for ticker in tickers[:3]:  # Top 3 per sector for speed
+        for ticker in tickers[:5]:  # Top 5 per sector (paid tier)
             try:
                 t = yf.Ticker(ticker)
                 info = t.info
@@ -219,6 +219,35 @@ def get_recommendations(
                 if risk_tolerance == "conservative" and div_yield > 0.02:
                     score += 8
                     signals.append("dividend_payer")
+
+                # 7. RSI — Relative Strength Index (14-day)
+                if len(hist) >= 14:
+                    delta_prices = hist["Close"].diff()
+                    gains = delta_prices.where(delta_prices > 0, 0).rolling(14).mean()
+                    losses = (-delta_prices.where(delta_prices < 0, 0)).rolling(14).mean()
+                    rs = gains.iloc[-1] / losses.iloc[-1] if losses.iloc[-1] != 0 else 100
+                    rsi = 100 - (100 / (1 + rs))
+                    if 40 <= rsi <= 60:
+                        score += 6
+                        signals.append("neutral_rsi")
+                    elif rsi < 30:
+                        score += 10
+                        signals.append("oversold")
+                    elif rsi > 70:
+                        score -= 5
+                        signals.append("overbought")
+
+                # 8. 52-week range position
+                w52_high = _safe_get(info, "fiftyTwoWeekHigh", 0)
+                w52_low = _safe_get(info, "fiftyTwoWeekLow", 0)
+                if w52_high and w52_low and w52_high != w52_low:
+                    range_pos = (current_price - w52_low) / (w52_high - w52_low)
+                    if range_pos < 0.3:
+                        score += 7
+                        signals.append("near_52w_low")
+                    elif range_pos > 0.9:
+                        score -= 3
+                        signals.append("near_52w_high")
 
                 score = max(0, min(100, score))
 

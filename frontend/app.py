@@ -145,19 +145,25 @@ with st.sidebar:
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    st.markdown("#### 🔌 System Status")
-    import requests
+    st.markdown("#### System Status")
+    import os
+    import requests as _req
+    _backend = "http://localhost:8000"
     try:
-        r = requests.get("http://localhost:8000/health", timeout=3)
+        _backend = st.secrets["BACKEND_URL"]
+    except Exception:
+        _backend = os.environ.get("BACKEND_URL", "http://localhost:8000")
+    try:
+        r = _req.get(f"{_backend}/health", timeout=5)
         if r.status_code == 200:
             st.success("Backend Online", icon="✅")
         else:
             st.error("Backend Error", icon="❌")
     except Exception:
-        st.warning("Backend Offline — Start the API server", icon="⚠️")
+        st.warning("Backend Offline", icon="⚠️")
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-    st.caption("Built for HackUSF 2026 🏆")
+    st.caption("Built for HackUSF 2026")
 
 # ── Hero Section ──
 st.markdown("")

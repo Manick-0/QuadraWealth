@@ -88,7 +88,7 @@ with tab2:
     st.markdown("### 🤖 RAG-Powered Stock Recommendations")
     st.caption("Powered by ChromaDB vector search over financial news — cross-referenced with your risk profile.")
 
-    if st.button("🔄 Generate Recommendations", type="primary", use_container_width=True):
+    if st.button("Generate Recommendations", type="primary", use_container_width=True):
         with st.spinner("Running RAG pipeline..."):
             recs = api_post(
                 "/api/stocks/recommendations",
@@ -134,7 +134,7 @@ with tab2:
                         st.markdown(signal_html, unsafe_allow_html=True)
 
                     # Reasoning
-                    with st.expander("💡 AI Reasoning"):
+                    with st.expander("View AI Reasoning"):
                         st.write(rec.get("reasoning", ""))
 
                     st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)

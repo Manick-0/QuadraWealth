@@ -1,0 +1,338 @@
+{
+  "events": [
+    {
+      "id": "evt_nba_001",
+      "sport": "basketball_nba",
+      "league": "NBA",
+      "home_team": "Los Angeles Lakers",
+      "away_team": "Boston Celtics",
+      "commence_time": "2026-03-29T00:00:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Lakers", "price": 150}, {"name": "Boston Celtics", "price": -175}]},
+            {"key": "spreads", "outcomes": [{"name": "Los Angeles Lakers", "price": -110, "point": 3.5}, {"name": "Boston Celtics", "price": -110, "point": -3.5}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -110, "point": 224.5}, {"name": "Under", "price": -110, "point": 224.5}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Lakers", "price": 155}, {"name": "Boston Celtics", "price": -180}]},
+            {"key": "spreads", "outcomes": [{"name": "Los Angeles Lakers", "price": -108, "point": 3.5}, {"name": "Boston Celtics", "price": -112, "point": -3.5}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -108, "point": 225.0}, {"name": "Under", "price": -112, "point": 225.0}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Lakers", "price": 160}, {"name": "Boston Celtics", "price": -170}]},
+            {"key": "spreads", "outcomes": [{"name": "Los Angeles Lakers", "price": -105, "point": 4.0}, {"name": "Boston Celtics", "price": -115, "point": -4.0}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -105, "point": 224.0}, {"name": "Under", "price": -115, "point": 224.0}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_002",
+      "sport": "basketball_nba",
+      "league": "NBA",
+      "home_team": "Golden State Warriors",
+      "away_team": "Milwaukee Bucks",
+      "commence_time": "2026-03-29T02:30:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Golden State Warriors", "price": -130}, {"name": "Milwaukee Bucks", "price": 110}]},
+            {"key": "spreads", "outcomes": [{"name": "Golden State Warriors", "price": -110, "point": -2.5}, {"name": "Milwaukee Bucks", "price": -110, "point": 2.5}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Golden State Warriors", "price": -125}, {"name": "Milwaukee Bucks", "price": 108}]},
+            {"key": "spreads", "outcomes": [{"name": "Golden State Warriors", "price": -112, "point": -2.0}, {"name": "Milwaukee Bucks", "price": -108, "point": 2.0}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Golden State Warriors", "price": -135}, {"name": "Milwaukee Bucks", "price": 118}]},
+            {"key": "spreads", "outcomes": [{"name": "Golden State Warriors", "price": -108, "point": -2.5}, {"name": "Milwaukee Bucks", "price": -112, "point": 2.5}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_003",
+      "sport": "basketball_nba",
+      "league": "NBA",
+      "home_team": "Denver Nuggets",
+      "away_team": "Phoenix Suns",
+      "commence_time": "2026-03-30T01:00:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Denver Nuggets", "price": -200}, {"name": "Phoenix Suns", "price": 170}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Denver Nuggets", "price": -190}, {"name": "Phoenix Suns", "price": 165}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Denver Nuggets", "price": -185}, {"name": "Phoenix Suns", "price": 175}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_nfl_001",
+      "sport": "americanfootball_nfl",
+      "league": "NFL",
+      "home_team": "Kansas City Chiefs",
+      "away_team": "Buffalo Bills",
+      "commence_time": "2026-03-30T17:00:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Kansas City Chiefs", "price": -145}, {"name": "Buffalo Bills", "price": 125}]},
+            {"key": "spreads", "outcomes": [{"name": "Kansas City Chiefs", "price": -110, "point": -2.5}, {"name": "Buffalo Bills", "price": -110, "point": 2.5}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -110, "point": 48.5}, {"name": "Under", "price": -110, "point": 48.5}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Kansas City Chiefs", "price": -150}, {"name": "Buffalo Bills", "price": 130}]},
+            {"key": "spreads", "outcomes": [{"name": "Kansas City Chiefs", "price": -108, "point": -3.0}, {"name": "Buffalo Bills", "price": -112, "point": 3.0}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -105, "point": 49.0}, {"name": "Under", "price": -115, "point": 49.0}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Kansas City Chiefs", "price": -140}, {"name": "Buffalo Bills", "price": 128}]},
+            {"key": "spreads", "outcomes": [{"name": "Kansas City Chiefs", "price": -110, "point": -2.5}, {"name": "Buffalo Bills", "price": -110, "point": 2.5}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -108, "point": 48.5}, {"name": "Under", "price": -112, "point": 48.5}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_nfl_002",
+      "sport": "americanfootball_nfl",
+      "league": "NFL",
+      "home_team": "Dallas Cowboys",
+      "away_team": "Philadelphia Eagles",
+      "commence_time": "2026-03-30T20:30:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Dallas Cowboys", "price": 138}, {"name": "Philadelphia Eagles", "price": -160}]},
+            {"key": "spreads", "outcomes": [{"name": "Dallas Cowboys", "price": -110, "point": 3.0}, {"name": "Philadelphia Eagles", "price": -110, "point": -3.0}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Dallas Cowboys", "price": 130}, {"name": "Philadelphia Eagles", "price": -152}]},
+            {"key": "spreads", "outcomes": [{"name": "Dallas Cowboys", "price": -108, "point": 3.0}, {"name": "Philadelphia Eagles", "price": -112, "point": -3.0}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Dallas Cowboys", "price": 145}, {"name": "Philadelphia Eagles", "price": -155}]},
+            {"key": "spreads", "outcomes": [{"name": "Dallas Cowboys", "price": -105, "point": 3.5}, {"name": "Philadelphia Eagles", "price": -115, "point": -3.5}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_mlb_001",
+      "sport": "baseball_mlb",
+      "league": "MLB",
+      "home_team": "New York Yankees",
+      "away_team": "Houston Astros",
+      "commence_time": "2026-03-29T23:05:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "New York Yankees", "price": -135}, {"name": "Houston Astros", "price": 115}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -110, "point": 8.5}, {"name": "Under", "price": -110, "point": 8.5}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "New York Yankees", "price": -140}, {"name": "Houston Astros", "price": 120}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -112, "point": 8.5}, {"name": "Under", "price": -108, "point": 8.5}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "New York Yankees", "price": -130}, {"name": "Houston Astros", "price": 118}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -108, "point": 9.0}, {"name": "Under", "price": -112, "point": 9.0}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_mlb_002",
+      "sport": "baseball_mlb",
+      "league": "MLB",
+      "home_team": "Los Angeles Dodgers",
+      "away_team": "San Diego Padres",
+      "commence_time": "2026-03-30T01:10:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Dodgers", "price": -180}, {"name": "San Diego Padres", "price": 155}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Dodgers", "price": -175}, {"name": "San Diego Padres", "price": 150}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Dodgers", "price": -170}, {"name": "San Diego Padres", "price": 158}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_cricket_001",
+      "sport": "cricket_ipl",
+      "league": "T20 IPL",
+      "home_team": "Mumbai Indians",
+      "away_team": "Chennai Super Kings",
+      "commence_time": "2026-03-29T14:30:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Mumbai Indians", "price": -120}, {"name": "Chennai Super Kings", "price": 100}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Mumbai Indians", "price": -115}, {"name": "Chennai Super Kings", "price": -105}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Mumbai Indians", "price": -125}, {"name": "Chennai Super Kings", "price": 108}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_cricket_002",
+      "sport": "cricket_ipl",
+      "league": "T20 IPL",
+      "home_team": "Royal Challengers Bangalore",
+      "away_team": "Kolkata Knight Riders",
+      "commence_time": "2026-03-30T14:30:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Royal Challengers Bangalore", "price": 105}, {"name": "Kolkata Knight Riders", "price": -125}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Royal Challengers Bangalore", "price": 115}, {"name": "Kolkata Knight Riders", "price": -130}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Royal Challengers Bangalore", "price": 100}, {"name": "Kolkata Knight Riders", "price": -118}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_nba_004",
+      "sport": "basketball_nba",
+      "league": "NBA",
+      "home_team": "Miami Heat",
+      "away_team": "New York Knicks",
+      "commence_time": "2026-03-29T19:30:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Miami Heat", "price": 105}, {"name": "New York Knicks", "price": -125}]},
+            {"key": "spreads", "outcomes": [{"name": "Miami Heat", "price": -110, "point": 2.5}, {"name": "New York Knicks", "price": -110, "point": -2.5}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Miami Heat", "price": 110}, {"name": "New York Knicks", "price": -130}]},
+            {"key": "spreads", "outcomes": [{"name": "Miami Heat", "price": -108, "point": 2.5}, {"name": "New York Knicks", "price": -112, "point": -2.5}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Miami Heat", "price": 115}, {"name": "New York Knicks", "price": -120}]},
+            {"key": "spreads", "outcomes": [{"name": "Miami Heat", "price": -105, "point": 3.0}, {"name": "New York Knicks", "price": -115, "point": -3.0}]}
+          ]
+        }
+      ]
+    }
+  ]
+}

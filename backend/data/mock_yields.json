@@ -1,0 +1,136 @@
+{
+  "macro": {
+    "inflation_rate": 2.8,
+    "fed_funds_rate": 4.75,
+    "gdp_growth": 1.8,
+    "unemployment": 3.8,
+    "sp500_pe": 22.5,
+    "vix": 14.2,
+    "ten_year_yield": 4.1
+  },
+  "vehicles": [
+    {
+      "name": "Marcus by Goldman Sachs HYSA",
+      "category": "hysa",
+      "current_yield": 4.40,
+      "risk_level": "very_low",
+      "liquidity": "instant",
+      "min_investment": 0,
+      "description": "FDIC-insured high-yield savings account with no minimum balance requirement."
+    },
+    {
+      "name": "Ally Bank HYSA",
+      "category": "hysa",
+      "current_yield": 4.20,
+      "risk_level": "very_low",
+      "liquidity": "instant",
+      "min_investment": 0,
+      "description": "Online savings account with competitive APY and no monthly fees."
+    },
+    {
+      "name": "Wealthfront Cash Account",
+      "category": "hysa",
+      "current_yield": 4.50,
+      "risk_level": "very_low",
+      "liquidity": "instant",
+      "min_investment": 0,
+      "description": "Cash management account with FDIC insurance up to $8M through partner banks."
+    },
+    {
+      "name": "3-Month US T-Bill",
+      "category": "tbill",
+      "current_yield": 5.15,
+      "risk_level": "very_low",
+      "liquidity": "days",
+      "min_investment": 100,
+      "description": "Short-term US government debt. State tax exempt. Purchased through TreasuryDirect."
+    },
+    {
+      "name": "6-Month US T-Bill",
+      "category": "tbill",
+      "current_yield": 4.95,
+      "risk_level": "very_low",
+      "liquidity": "weeks",
+      "min_investment": 100,
+      "description": "Medium-term T-Bill with slightly higher yield. Minimal interest rate risk."
+    },
+    {
+      "name": "1-Year US Treasury Note",
+      "category": "tbill",
+      "current_yield": 4.60,
+      "risk_level": "very_low",
+      "liquidity": "weeks",
+      "min_investment": 100,
+      "description": "One-year government note offering state-tax-free interest income."
+    },
+    {
+      "name": "10-Year US Treasury Bond",
+      "category": "bond",
+      "current_yield": 4.10,
+      "risk_level": "low",
+      "liquidity": "days",
+      "min_investment": 100,
+      "description": "Benchmark long-term government bond. Subject to interest rate risk."
+    },
+    {
+      "name": "Series I Savings Bond",
+      "category": "bond",
+      "current_yield": 3.11,
+      "risk_level": "very_low",
+      "liquidity": "weeks",
+      "min_investment": 25,
+      "description": "Inflation-protected savings bond. Rate adjusts semi-annually with CPI. $10K annual purchase limit."
+    },
+    {
+      "name": "Vanguard Total Bond Market ETF (BND)",
+      "category": "bond",
+      "current_yield": 3.85,
+      "risk_level": "low",
+      "liquidity": "instant",
+      "min_investment": 1,
+      "description": "Broad US bond market ETF covering government and investment-grade corporate bonds."
+    },
+    {
+      "name": "SPDR Gold Shares (GLD)",
+      "category": "gold",
+      "current_yield": 0,
+      "risk_level": "medium",
+      "liquidity": "instant",
+      "min_investment": 1,
+      "description": "Physical gold-backed ETF. No yield but serves as inflation hedge. Price: ~$235/share.",
+      "price_per_oz": 2350,
+      "ytd_return": 8.5
+    },
+    {
+      "name": "iShares Gold Trust (IAU)",
+      "category": "gold",
+      "current_yield": 0,
+      "risk_level": "medium",
+      "liquidity": "instant",
+      "min_investment": 1,
+      "description": "Lower-cost alternative gold ETF. Expense ratio of 0.25%.",
+      "price_per_oz": 2350,
+      "ytd_return": 8.4
+    },
+    {
+      "name": "Invesco Optimum Yield Diversified Commodity (PDBC)",
+      "category": "commodity",
+      "current_yield": 2.1,
+      "risk_level": "medium",
+      "liquidity": "instant",
+      "min_investment": 1,
+      "description": "Diversified commodity ETF covering energy, metals, and agriculture futures.",
+      "ytd_return": 5.2
+    },
+    {
+      "name": "iShares S&P GSCI Commodity ETF (GSG)",
+      "category": "commodity",
+      "current_yield": 0,
+      "risk_level": "medium",
+      "liquidity": "instant",
+      "min_investment": 1,
+      "description": "Broad commodity index ETF weighted toward energy. Tracks S&P GSCI index.",
+      "ytd_return": 3.8
+    }
+  ]
+}

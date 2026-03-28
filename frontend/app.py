@@ -30,20 +30,11 @@ div[data-testid="stStatusWidget"] {display: none !important;}
 .viewerBadge_container__r5tak {display: none !important;}
 .styles_viewerBadge__CvC9N {display: none !important;}
 
-/* Hide keyboard_double arrow icon */
-button[kind="header"] {display: none !important;}
-[data-testid="collapsedControl"] {display: none !important;}
-.css-1rs6os {display: none !important;}
-.css-10trblm {display: none !important;}
-
-/* Fix sidebar "app" label */
-section[data-testid="stSidebar"] [data-testid="stSidebarNavLink"]:first-child span {
-    font-size: 0 !important;
-}
-section[data-testid="stSidebar"] [data-testid="stSidebarNavLink"]:first-child span::after {
-    content: "Home";
-    font-size: 14px !important;
-}
+/* Hide keyboard_double text but keep sidebar functional */
+[data-testid="collapsedControl"] { font-size: 0 !important; color: transparent !important; }
+[data-testid="collapsedControl"] * { font-size: 0 !important; color: transparent !important; }
+.stAppHeader { background: transparent !important; }
+header[data-testid="stHeader"] { background: transparent !important; height: 0 !important; min-height: 0 !important; }
 
 .main .block-container {
     padding-top: 2rem;

@@ -225,7 +225,21 @@ def render_bookmaker_badge(bookmaker: str) -> str:
     return f'<span class="{cls}">{bookmaker}</span>'
 
 
-BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000")
+def _get_backend_url():
+    """Get backend URL from Streamlit secrets, env var, or default."""
+    # 1. Streamlit Cloud secrets (secrets.toml)
+    try:
+        return st.secrets["BACKEND_URL"]
+    except Exception:
+        pass
+    # 2. Environment variable
+    url = os.environ.get("BACKEND_URL")
+    if url:
+        return url
+    # 3. Default localhost
+    return "http://localhost:8000"
+
+BACKEND_URL = _get_backend_url()
 
 
 def api_get(endpoint: str, params: dict = None):

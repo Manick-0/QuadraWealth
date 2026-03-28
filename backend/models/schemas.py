@@ -82,6 +82,7 @@ class MarketOverview(BaseModel):
 
 class OddsLine(BaseModel):
     bookmaker: str
+    bookmaker_key: str = ""
     market: str  # h2h, spreads, totals
     outcome: str  # team name or Over/Under
     price: float  # American odds (-110, +150, etc.)
@@ -95,37 +96,80 @@ class BettingEvent(BaseModel):
     home_team: str
     away_team: str
     commence_time: str
+    is_live: bool = False
     odds: list[OddsLine]
+
+
+class ArbLeg(BaseModel):
+    """A single leg of an N-way arbitrage opportunity."""
+    book: str
+    book_key: str = ""
+    outcome: str
+    odds: float  # American
+    decimal_odds: float
+    implied_prob: float
+    stake: float
 
 
 class ArbitrageOpportunity(BaseModel):
     event: str
+    event_id: str = ""
     sport: str
     market: str
-    book_a: str
-    outcome_a: str
-    odds_a: float
-    book_b: str
-    outcome_b: str
-    odds_b: float
+    point: Optional[float] = None
+    commence_time: str = ""
+    is_live: bool = False
+    legs: list[ArbLeg] = []
+    num_legs: int = 2
     arb_pct: float = Field(description="Arbitrage percentage — guaranteed profit margin")
-    stake_a: float = Field(description="Optimal stake on side A for $100 total")
-    stake_b: float = Field(description="Optimal stake on side B for $100 total")
+    arb_sum: float = Field(default=0, description="Sum of implied probabilities (< 1.0 = arb)")
     guaranteed_profit: float
+    # Legacy compat for 2-way display
+    book_a: str = ""
+    outcome_a: str = ""
+    odds_a: float = 0
+    stake_a: float = Field(default=0, description="Optimal stake on side A for $100 total")
+    book_b: str = ""
+    outcome_b: str = ""
+    odds_b: float = 0
+    stake_b: float = Field(default=0, description="Optimal stake on side B for $100 total")
 
 
 class PositiveEVBet(BaseModel):
     event: str
     sport: str
     bookmaker: str
+    bookmaker_key: str = ""
     market: str
     outcome: str
+    point: Optional[float] = None
     odds: float  # American
+    decimal_odds: float = 0
     implied_prob: float
-    true_prob: float  # From sharpest line
+    true_prob: float  # From consensus across books
     edge_pct: float
     ev_per_dollar: float
     recommended_stake: float
+    num_books_consensus: int = 0
+    commence_time: str = ""
+    is_live: bool = False
+
+
+class PollerStatus(BaseModel):
+    """Health and metrics for the background odds poller."""
+    is_running: bool = False
+    data_source: str = "unknown"
+    is_live: bool = False
+    last_poll: Optional[str] = None
+    poll_count: int = 0
+    error_count: int = 0
+    event_count: int = 0
+    arb_count: int = 0
+    ev_bet_count: int = 0
+    has_live_events: bool = False
+    api_requests_remaining: Optional[int] = None
+    poll_duration_ms: float = 0
+    poll_interval: int = 30
 
 
 # ─── Savings & Yields (Mode 3) ────────────────────────────

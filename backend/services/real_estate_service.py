@@ -180,6 +180,7 @@ def get_all_properties(
     max_price: Optional[float] = None,
     min_bedrooms: Optional[int] = None,
     state: Optional[str] = None,
+    city: Optional[str] = None,
 ) -> list[dict]:
     """Return filtered list of properties."""
     properties = load_properties()
@@ -194,6 +195,9 @@ def get_all_properties(
         properties = [p for p in properties if p["bedrooms"] >= min_bedrooms]
     if state:
         properties = [p for p in properties if p["state"].upper() == state.upper()]
+    if city:
+        city_lower = city.lower()
+        properties = [p for p in properties if city_lower in p.get("city", "").lower()]
 
     return properties
 

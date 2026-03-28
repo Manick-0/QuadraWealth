@@ -34,6 +34,21 @@
             {"key": "spreads", "outcomes": [{"name": "Los Angeles Lakers", "price": -105, "point": 4.0}, {"name": "Boston Celtics", "price": -115, "point": -4.0}]},
             {"key": "totals", "outcomes": [{"name": "Over", "price": -105, "point": 224.0}, {"name": "Under", "price": -115, "point": 224.0}]}
           ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Lakers", "price": 148}, {"name": "Boston Celtics", "price": -172}]},
+            {"key": "spreads", "outcomes": [{"name": "Los Angeles Lakers", "price": -110, "point": 3.5}, {"name": "Boston Celtics", "price": -110, "point": -3.5}]}
+          ]
+        },
+        {
+          "key": "caesars",
+          "title": "Caesars",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Los Angeles Lakers", "price": 152}, {"name": "Boston Celtics", "price": -178}]}
+          ]
         }
       ]
     },
@@ -68,6 +83,13 @@
             {"key": "h2h", "outcomes": [{"name": "Golden State Warriors", "price": -135}, {"name": "Milwaukee Bucks", "price": 118}]},
             {"key": "spreads", "outcomes": [{"name": "Golden State Warriors", "price": -108, "point": -2.5}, {"name": "Milwaukee Bucks", "price": -112, "point": 2.5}]}
           ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Golden State Warriors", "price": -128}, {"name": "Milwaukee Bucks", "price": 112}]}
+          ]
         }
       ]
     },
@@ -98,6 +120,13 @@
           "title": "Hard Rock Bet",
           "markets": [
             {"key": "h2h", "outcomes": [{"name": "Denver Nuggets", "price": -185}, {"name": "Phoenix Suns", "price": 175}]}
+          ]
+        },
+        {
+          "key": "caesars",
+          "title": "Caesars",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Denver Nuggets", "price": -195}, {"name": "Phoenix Suns", "price": 168}]}
           ]
         }
       ]
@@ -136,6 +165,14 @@
             {"key": "spreads", "outcomes": [{"name": "Kansas City Chiefs", "price": -110, "point": -2.5}, {"name": "Buffalo Bills", "price": -110, "point": 2.5}]},
             {"key": "totals", "outcomes": [{"name": "Over", "price": -108, "point": 48.5}, {"name": "Under", "price": -112, "point": 48.5}]}
           ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Kansas City Chiefs", "price": -148}, {"name": "Buffalo Bills", "price": 126}]},
+            {"key": "spreads", "outcomes": [{"name": "Kansas City Chiefs", "price": -110, "point": -2.5}, {"name": "Buffalo Bills", "price": -110, "point": 2.5}]}
+          ]
         }
       ]
     },
@@ -169,6 +206,13 @@
           "markets": [
             {"key": "h2h", "outcomes": [{"name": "Dallas Cowboys", "price": 145}, {"name": "Philadelphia Eagles", "price": -155}]},
             {"key": "spreads", "outcomes": [{"name": "Dallas Cowboys", "price": -105, "point": 3.5}, {"name": "Philadelphia Eagles", "price": -115, "point": -3.5}]}
+          ]
+        },
+        {
+          "key": "caesars",
+          "title": "Caesars",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Dallas Cowboys", "price": 140}, {"name": "Philadelphia Eagles", "price": -158}]}
           ]
         }
       ]
@@ -204,6 +248,13 @@
             {"key": "h2h", "outcomes": [{"name": "New York Yankees", "price": -130}, {"name": "Houston Astros", "price": 118}]},
             {"key": "totals", "outcomes": [{"name": "Over", "price": -108, "point": 9.0}, {"name": "Under", "price": -112, "point": 9.0}]}
           ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "New York Yankees", "price": -138}, {"name": "Houston Astros", "price": 116}]}
+          ]
         }
       ]
     },
@@ -234,6 +285,124 @@
           "title": "Hard Rock Bet",
           "markets": [
             {"key": "h2h", "outcomes": [{"name": "Los Angeles Dodgers", "price": -170}, {"name": "San Diego Padres", "price": 158}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_nhl_001",
+      "sport": "icehockey_nhl",
+      "league": "NHL",
+      "home_team": "Toronto Maple Leafs",
+      "away_team": "Boston Bruins",
+      "commence_time": "2026-03-29T23:00:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Toronto Maple Leafs", "price": 120}, {"name": "Boston Bruins", "price": -140}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -115, "point": 6.5}, {"name": "Under", "price": -105, "point": 6.5}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Toronto Maple Leafs", "price": 125}, {"name": "Boston Bruins", "price": -145}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -110, "point": 6.5}, {"name": "Under", "price": -110, "point": 6.5}]}
+          ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Toronto Maple Leafs", "price": 118}, {"name": "Boston Bruins", "price": -138}]}
+          ]
+        },
+        {
+          "key": "caesars",
+          "title": "Caesars",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Toronto Maple Leafs", "price": 122}, {"name": "Boston Bruins", "price": -142}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_mls_001",
+      "sport": "soccer_usa_mls",
+      "league": "MLS",
+      "home_team": "LAFC",
+      "away_team": "Inter Miami",
+      "commence_time": "2026-03-30T00:00:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "LAFC", "price": 140}, {"name": "Inter Miami", "price": 180}, {"name": "Draw", "price": 240}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -120, "point": 2.5}, {"name": "Under", "price": 100, "point": 2.5}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "LAFC", "price": 135}, {"name": "Inter Miami", "price": 190}, {"name": "Draw", "price": 250}]},
+            {"key": "totals", "outcomes": [{"name": "Over", "price": -115, "point": 2.5}, {"name": "Under", "price": -105, "point": 2.5}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "LAFC", "price": 145}, {"name": "Inter Miami", "price": 175}, {"name": "Draw", "price": 235}]}
+          ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "LAFC", "price": 138}, {"name": "Inter Miami", "price": 185}, {"name": "Draw", "price": 260}]}
+          ]
+        },
+        {
+          "key": "caesars",
+          "title": "Caesars",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "LAFC", "price": 142}, {"name": "Inter Miami", "price": 188}, {"name": "Draw", "price": 245}]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evt_mls_002",
+      "sport": "soccer_usa_mls",
+      "league": "MLS",
+      "home_team": "Atlanta United",
+      "away_team": "New York Red Bulls",
+      "commence_time": "2026-03-29T23:30:00Z",
+      "bookmakers": [
+        {
+          "key": "fanduel",
+          "title": "FanDuel",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Atlanta United", "price": -105}, {"name": "New York Red Bulls", "price": 200}, {"name": "Draw", "price": 280}]}
+          ]
+        },
+        {
+          "key": "draftkings",
+          "title": "DraftKings",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Atlanta United", "price": -110}, {"name": "New York Red Bulls", "price": 210}, {"name": "Draw", "price": 275}]}
+          ]
+        },
+        {
+          "key": "hardrockbet",
+          "title": "Hard Rock Bet",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Atlanta United", "price": -102}, {"name": "New York Red Bulls", "price": 195}, {"name": "Draw", "price": 290}]}
           ]
         }
       ]
@@ -330,6 +499,20 @@
           "markets": [
             {"key": "h2h", "outcomes": [{"name": "Miami Heat", "price": 115}, {"name": "New York Knicks", "price": -120}]},
             {"key": "spreads", "outcomes": [{"name": "Miami Heat", "price": -105, "point": 3.0}, {"name": "New York Knicks", "price": -115, "point": -3.0}]}
+          ]
+        },
+        {
+          "key": "betmgm",
+          "title": "BetMGM",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Miami Heat", "price": 108}, {"name": "New York Knicks", "price": -128}]}
+          ]
+        },
+        {
+          "key": "caesars",
+          "title": "Caesars",
+          "markets": [
+            {"key": "h2h", "outcomes": [{"name": "Miami Heat", "price": 112}, {"name": "New York Knicks", "price": -132}]}
           ]
         }
       ]

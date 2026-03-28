@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # App
     APP_NAME: str = "QuadraWealth"
-    APP_VERSION: str = "1.0.0"
+    APP_VERSION: str = "2.0.0"
     DEBUG: bool = True
 
     # Server
@@ -36,6 +36,15 @@ class Settings(BaseSettings):
     USE_LIVE_STOCKS: bool = True  # yfinance is free, default to live
     USE_LIVE_ZILLOW: bool = False  # Mock only (Zillow API requires paid RapidAPI)
 
+    # ── Odds Poller Configuration ──
+    ODDS_POLL_INTERVAL: int = 60        # Seconds between polls (pre-match)
+    ODDS_POLL_LIVE_INTERVAL: int = 30   # Seconds between polls (live events)
+    ODDS_POLL_ENABLED: bool = True      # Enable background polling
+
+    # ── Arb / EV Thresholds ──
+    ARB_MIN_PROFIT_PCT: float = 0.1     # Min arb % to report (filters noise)
+    EV_MIN_EDGE_PCT: float = 2.0        # Min +EV edge % to report
+
     # The Odds API
     ODDS_API_BASE_URL: str = "https://api.the-odds-api.com/v4"
     ODDS_API_REGIONS: str = "us"
@@ -45,12 +54,16 @@ class Settings(BaseSettings):
         "draftkings",
         "hardrockbet",
         "prizepicks",
+        "betmgm",
+        "caesars",
     ]
     ODDS_API_SPORTS: list[str] = [
         "basketball_nba",
         "americanfootball_nfl",
         "baseball_mlb",
-        "cricket_ipl",  # T20 cricket (IPL is biggest T20 league)
+        "icehockey_nhl",
+        "soccer_usa_mls",
+        "cricket_ipl",
     ]
 
     # yfinance defaults

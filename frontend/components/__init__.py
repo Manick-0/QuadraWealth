@@ -122,6 +122,21 @@ def inject_custom_css():
     .book-fanduel { color: #1A73E8; font-weight: 600; }
     .book-draftkings { color: #53D769; font-weight: 600; }
     .book-hardrockbet { color: #FF8C00; font-weight: 600; }
+    .book-prizepicks { color: #7B2FBE; font-weight: 600; }
+    .book-betmgm { color: #C4A962; font-weight: 600; }
+    .book-caesars { color: #00A650; font-weight: 600; }
+
+    /* Live pulse */
+    @keyframes live-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    .live-dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: #FF4B4B; display: inline-block;
+        animation: live-pulse 1.5s ease-in-out infinite;
+        margin-right: 4px;
+    }
 
     /* Score bar */
     .score-bar {
@@ -247,6 +262,8 @@ def render_bookmaker_badge(bookmaker: str) -> str:
         "DraftKings": ("#53D769", "book-draftkings"),
         "Hard Rock Bet": ("#FF8C00", "book-hardrockbet"),
         "PrizePicks": ("#7B2FBE", "book-prizepicks"),
+        "BetMGM": ("#C4A962", "book-betmgm"),
+        "Caesars": ("#00A650", "book-caesars"),
     }
     color, cls = colors.get(bookmaker, ("#FAFAFA", ""))
     return f'<span class="{cls}">{bookmaker}</span>'

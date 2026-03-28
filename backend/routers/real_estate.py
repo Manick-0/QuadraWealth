@@ -21,6 +21,7 @@ async def list_properties(
     max_price: Optional[float] = None,
     min_bedrooms: Optional[int] = None,
     state: Optional[str] = None,
+    city: Optional[str] = None,
 ):
     """List properties with optional filters."""
     return get_all_properties(
@@ -29,6 +30,7 @@ async def list_properties(
         max_price=max_price,
         min_bedrooms=min_bedrooms,
         state=state,
+        city=city,
     )
 
 
@@ -52,6 +54,7 @@ async def hottest_properties(
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
     state: Optional[str] = None,
+    city: Optional[str] = None,
 ):
     """Get top-ranked properties by selected investment goal."""
     return get_hottest_properties(
@@ -61,4 +64,5 @@ async def hottest_properties(
         min_price=min_price,
         max_price=max_price,
         state=state,
+        city=city,
     )

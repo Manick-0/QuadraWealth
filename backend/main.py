@@ -1,7 +1,10 @@
 """
 QuadraWealth — FastAPI Application Entry Point
 Multi-mode asset & capital manager backend.
+
+v2.0: Starts the OddsPoller background task on startup.
 """
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,18 +13,46 @@ from backend.config import settings
 from backend.database import init_db
 from backend.services.rag_engine import init_rag_engine
 
+# ── Configure logging ──
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s │ %(name)-16s │ %(levelname)-5s │ %(message)s",
+    datefmt="%H:%M:%S",
+)
+# Quiet noisy libs
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("chromadb").setLevel(logging.WARNING)
+logging.getLogger("aiohttp").setLevel(logging.WARNING)
+
+logger = logging.getLogger("quadrawealth")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup / shutdown lifecycle."""
     # ── Startup ──
-    print(f"🚀 Starting {settings.APP_NAME} v{settings.APP_VERSION}")
+    logger.info("🚀 Starting %s v%s", settings.APP_NAME, settings.APP_VERSION)
     init_db()
     await init_rag_engine()
-    print("✅ All systems initialized")
+
+    # Start the odds poller background task
+    if settings.ODDS_POLL_ENABLED:
+        from backend.services.odds_poller import get_poller
+        poller = get_poller()
+        await poller.start()
+        logger.info("📡 Odds poller active — scanning %d sports every %ds",
+                     len(settings.ODDS_API_SPORTS), settings.ODDS_POLL_INTERVAL)
+
+    logger.info("✅ All systems initialized")
     yield
+
     # ── Shutdown ──
-    print("👋 Shutting down QuadraWealth")
+    if settings.ODDS_POLL_ENABLED:
+        from backend.services.odds_poller import get_poller
+        poller = get_poller()
+        await poller.stop()
+
+    logger.info("👋 Shutting down QuadraWealth")
 
 
 app = FastAPI(

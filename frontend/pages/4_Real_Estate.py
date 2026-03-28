@@ -1,6 +1,7 @@
 """
 QuadraWealth — Mode 4: Real Estate
 Property investment screener with cap rate & cash-on-cash analysis.
+Filter by city, state, property type, price range.
 """
 import streamlit as st
 import plotly.graph_objects as go
@@ -45,7 +46,10 @@ with st.sidebar:
 
     price_range = st.slider("Price Range ($K)", 100, 600, (150, 500), step=25)
 
-    state_filter = st.text_input("State (2-letter)", placeholder="e.g., TX").upper() or None
+    st.markdown("---")
+    st.markdown("#### 📍 Location Filter")
+    city_filter = st.text_input("City", placeholder="e.g., Austin, Columbus").strip() or None
+    state_filter = st.text_input("State (2-letter)", placeholder="e.g., TX, OH").upper().strip() or None
 
     limit = st.slider("Results Limit", 5, 50, 10)
 
@@ -54,7 +58,15 @@ tab1, tab2, tab3 = st.tabs(["🔥 Hottest Properties", "🗺️ Property Map", "
 
 # ── Tab 1: Hottest Properties ──
 with tab1:
-    st.markdown(f"### 🔥 Top Properties — {goal.replace('_', ' ').title()}")
+    # Build location label
+    loc_parts = []
+    if city_filter:
+        loc_parts.append(city_filter.title())
+    if state_filter:
+        loc_parts.append(state_filter)
+    loc_label = f" in {', '.join(loc_parts)}" if loc_parts else ""
+
+    st.markdown(f"### 🔥 Top Properties — {goal.replace('_', ' ').title()}{loc_label}")
 
     params = {
         "goal": goal,
@@ -66,6 +78,8 @@ with tab1:
         params["property_type"] = prop_type_filter
     if state_filter:
         params["state"] = state_filter
+    if city_filter:
+        params["city"] = city_filter
 
     with st.spinner("Analyzing properties..."):
         results = api_get("/api/realestate/hottest", params=params)
@@ -124,32 +138,55 @@ with tab1:
                     </div>
                     """, unsafe_allow_html=True)
 
-                with st.expander("📊 Full Breakdown"):
+                # ── Full Breakdown (inline instead of expander to avoid icon bug) ──
+                show_key = f"show_detail_{i}"
+                if show_key not in st.session_state:
+                    st.session_state[show_key] = False
+
+                if st.button(f"{'▼ Hide' if st.session_state[show_key] else '▶ Show'} Full Breakdown", key=f"btn_{i}"):
+                    st.session_state[show_key] = not st.session_state[show_key]
+
+                if st.session_state[show_key]:
                     bc1, bc2 = st.columns(2)
                     with bc1:
                         st.markdown("**Property Details**")
-                        st.write(f"🏠 Type: {prop.get('property_type', '')}")
-                        st.write(f"🛏️ Beds: {prop.get('bedrooms', 0)} | 🛁 Baths: {prop.get('bathrooms', 0)}")
-                        st.write(f"📐 Sqft: {prop.get('sqft', 0):,}")
-                        st.write(f"📅 Year Built: {prop.get('year_built', 0)}")
-                        st.write(f"💵 Expected Rent: ${prop.get('expected_rent', 0):,.0f}/mo")
+                        st.markdown(f"""
+                        <div style="color:rgba(250,250,250,0.8); font-size:0.9rem; line-height:1.8;">
+                            🏠 Type: {prop.get('property_type', '')}<br>
+                            🛏️ Beds: {prop.get('bedrooms', 0)} | 🛁 Baths: {prop.get('bathrooms', 0)}<br>
+                            📐 Sqft: {prop.get('sqft', 0):,}<br>
+                            📅 Year Built: {prop.get('year_built', 0)}<br>
+                            💵 Expected Rent: ${prop.get('expected_rent', 0):,.0f}/mo
+                        </div>
+                        """, unsafe_allow_html=True)
                     with bc2:
                         st.markdown("**Financial Analysis**")
-                        st.write(f"📊 NOI: ${r.get('noi', 0):,.0f}/yr")
-                        st.write(f"💰 Down Payment (20%): ${r.get('down_payment', 0):,.0f}")
-                        st.write(f"🏦 Mortgage: ${r.get('mortgage_payment', 0):,.0f}/mo")
-                        st.write(f"💸 Total Expenses: ${r.get('total_monthly_expenses', 0):,.0f}/mo")
-                        st.write(f"📈 Annual Cash Flow: ${r.get('annual_cash_flow', 0):,.0f}")
+                        st.markdown(f"""
+                        <div style="color:rgba(250,250,250,0.8); font-size:0.9rem; line-height:1.8;">
+                            📊 NOI: ${r.get('noi', 0):,.0f}/yr<br>
+                            💰 Down Payment (20%): ${r.get('down_payment', 0):,.0f}<br>
+                            🏦 Mortgage: ${r.get('mortgage_payment', 0):,.0f}/mo<br>
+                            💸 Total Expenses: ${r.get('total_monthly_expenses', 0):,.0f}/mo<br>
+                            📈 Annual Cash Flow: ${r.get('annual_cash_flow', 0):,.0f}
+                        </div>
+                        """, unsafe_allow_html=True)
 
                 st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
     else:
-        st.warning("No properties match your filters.", icon="🔍")
+        loc_msg = f" in {', '.join(loc_parts)}" if loc_parts else ""
+        st.warning(f"No properties match your filters{loc_msg}. Try broadening your search.", icon="🔍")
 
 # ── Tab 2: Property Map ──
 with tab2:
     st.markdown("### 🗺️ Property Locations")
 
-    all_props = api_get("/api/realestate/properties")
+    map_params = {}
+    if state_filter:
+        map_params["state"] = state_filter
+    if city_filter:
+        map_params["city"] = city_filter
+
+    all_props = api_get("/api/realestate/properties", params=map_params if map_params else None)
     if all_props:
         # Create map centered on US
         m = folium.Map(location=[37.0, -96.0], zoom_start=4, tiles="CartoDB dark_matter")
@@ -181,7 +218,7 @@ with tab2:
                     fillOpacity=0.7,
                 ).add_to(m)
 
-        st_folium(m, width=None, height=500, use_container_width=True)
+        st_folium(m, width=None, height=500)
 
         # Legend
         st.markdown("""
@@ -261,6 +298,6 @@ with tab3:
                 yaxis=dict(gridcolor="rgba(255,255,255,0.05)"),
                 showlegend=False,
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, key="waterfall_chart")
         elif result:
             st.error(result.get("error", "Property not found"))

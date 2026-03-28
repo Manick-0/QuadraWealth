@@ -319,43 +319,51 @@ st.markdown("""
 
 st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-# ── Mode Cards ──
+# ── Mode Cards (clickable navigation) ──
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.markdown("""
+    <a href="/Stocks" target="_self" style="text-decoration:none;">
     <div class="mode-card card-anim-1">
         <div class="mode-icon">📈</div>
         <div class="mode-title">Stocks</div>
         <div class="mode-desc">AI-powered equity recommendations with real-time market data and RAG analysis.</div>
     </div>
+    </a>
     """, unsafe_allow_html=True)
 
 with col2:
     st.markdown("""
+    <a href="/The_Edge" target="_self" style="text-decoration:none;">
     <div class="mode-card card-anim-2">
         <div class="mode-icon">🎯</div>
         <div class="mode-title">The Edge</div>
         <div class="mode-desc">Arbitrage detection & +EV bets across FanDuel, DraftKings, and Hard Rock.</div>
     </div>
+    </a>
     """, unsafe_allow_html=True)
 
 with col3:
     st.markdown("""
+    <a href="/Savings_Yields" target="_self" style="text-decoration:none;">
     <div class="mode-card card-anim-3">
         <div class="mode-icon">🏦</div>
         <div class="mode-title">Savings & Yields</div>
         <div class="mode-desc">Dynamic yield finder powered by macroeconomic triggers and risk profiling.</div>
     </div>
+    </a>
     """, unsafe_allow_html=True)
 
 with col4:
     st.markdown("""
+    <a href="/Real_Estate" target="_self" style="text-decoration:none;">
     <div class="mode-card card-anim-4">
         <div class="mode-icon">🏠</div>
         <div class="mode-title">Real Estate</div>
         <div class="mode-desc">Property screener with cap rate, cash-on-cash, and goal-based scoring.</div>
     </div>
+    </a>
     """, unsafe_allow_html=True)
 
 st.markdown("")

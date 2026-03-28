@@ -119,39 +119,24 @@ if dashboard:
         poll_interval = poller.get("poll_interval", 30)
         live_badge = '<span class="live-dot"></span> LIVE EVENTS' if has_live_events else ""
 
-        st.markdown(f"""
-        <div style="background: rgba(0, 212, 170, 0.08); border: 1px solid rgba(0, 212, 170, 0.25);
-                    border-radius: 12px; padding: 10px 20px; margin-bottom: 16px;
-                    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width: 10px; height: 10px; border-radius: 50%; background: #00D4AA;
-                            box-shadow: 0 0 8px #00D4AA; animation: live-pulse 2s infinite;"></div>
-                <span style="color: #00D4AA; font-weight: 600; font-size: 0.9rem;">
-                    LIVE — Real-time odds
-                </span>
-            </div>
-            <span style="color:rgba(250,250,250,0.35); font-size:0.78rem;">
-                Poll #{poll_count} · {poll_ms:.0f}ms · every {poll_interval}s
-            </span>
-            {f'<span style="color:rgba(250,250,250,0.35); font-size:0.78rem;">API: {api_remaining} remaining</span>' if api_remaining else ''}
-            <span style="color:rgba(250,250,250,0.35); font-size:0.78rem; margin-left:auto;">
-                {fetch_time}
-            </span>
-            {f'<span style="font-size:0.8rem;">{live_badge}</span>' if live_badge else ''}
-        </div>
-        <style>@keyframes live-pulse {{ 0%,100% {{ opacity:1; }} 50% {{ opacity:0.3; }} }}</style>
-        """, unsafe_allow_html=True)
+        status_html = f"""<div style="background: rgba(0, 212, 170, 0.08); border: 1px solid rgba(0, 212, 170, 0.25); border-radius: 12px; padding: 10px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+<div style="display:flex; align-items:center; gap:8px;">
+<div style="width: 10px; height: 10px; border-radius: 50%; background: #00D4AA; box-shadow: 0 0 8px #00D4AA; animation: live-pulse 2s infinite;"></div>
+<span style="color: #00D4AA; font-weight: 600; font-size: 0.9rem;">LIVE — Real-time odds</span>
+</div>
+<span style="color:rgba(250,250,250,0.35); font-size:0.78rem;">Poll #{poll_count} · {poll_ms:.0f}ms · every {poll_interval}s</span>
+{f'<span style="color:rgba(250,250,250,0.35); font-size:0.78rem;">API: {api_remaining} remaining</span>' if api_remaining else ''}
+<span style="color:rgba(250,250,250,0.35); font-size:0.78rem; margin-left:auto;">{fetch_time}</span>
+{f'<span style="font-size:0.8rem;">{live_badge}</span>' if live_badge else ''}
+</div>
+<style>@keyframes live-pulse {{ 0%,100% {{ opacity:1; }} 50% {{ opacity:0.3; }} }}</style>"""
+        st.markdown(status_html, unsafe_allow_html=True)
     else:
-        st.markdown(f"""
-        <div style="background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3);
-                    border-radius: 12px; padding: 12px 20px; margin-bottom: 16px;
-                    display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.2rem;">📋</span>
-            <span style="color: #FFA500; font-weight: 600; font-size: 0.95rem;">
-                DEMO MODE — Showing sample data. Set ODDS_API_KEY in .env for live odds.
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
+        demo_html = """<div style="background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 12px; padding: 12px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+<span style="font-size: 1.2rem;">📋</span>
+<span style="color: #FFA500; font-weight: 600; font-size: 0.95rem;">DEMO MODE — Showing sample data. Set ODDS_API_KEY in .env for live odds.</span>
+</div>"""
+        st.markdown(demo_html, unsafe_allow_html=True)
 
     # ── Summary Metrics ──
     mc1, mc2, mc3, mc4, mc5 = st.columns(5)
@@ -244,27 +229,26 @@ if dashboard:
                         </div>
                     </div>"""
 
-                # Render entire card as ONE st.markdown call (prevents HTML sanitizer from breaking tags)
-                st.markdown(f"""
-                <div class="metric-card" style="border-color: rgba(0, 212, 170, 0.3);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-                        <div>
-                            <span style="font-size:1.1rem; font-weight:700; color:#FAFAFA;">🏆 {arb['event']}</span>
-                            <span class="badge-orange" style="margin-left:12px;">{arb['sport']}</span>
-                            <span class="badge-blue" style="margin-left:8px;">{arb['market'].upper()}</span>
-                            {f'<span style="color:rgba(250,250,250,0.35); font-size:0.8rem; margin-left:8px;">{game_time}</span>' if game_time else ''}
-                            {f'<span style="margin-left:8px;">{live_html}</span>' if live_html else ''}
-                            {f'<span class="badge-green" style="margin-left:8px;">{num_legs}-WAY</span>' if num_legs > 2 else ''}
-                        </div>
-                        <div style="font-size:1.4rem; font-weight:800; color:#00D4AA;">+{arb['arb_pct']:.2f}% EDGE</div>
-                    </div>
-                    {legs_html}
-                    <div style="text-align:center; margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
-                        <span style="color:rgba(250,250,250,0.5);">Guaranteed Profit on ${bankroll:,.0f} bankroll:</span>
-                        <span style="color:#00D4AA; font-weight:800; font-size:1.3rem; margin-left:8px;">${profit_scaled:.2f}</span>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                # Render entire card as ONE st.markdown call
+                card_html = f"""<div class="metric-card" style="border-color: rgba(0, 212, 170, 0.3);">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+<div>
+<span style="font-size:1.1rem; font-weight:700; color:#FAFAFA;">🏆 {arb['event']}</span>
+<span class="badge-orange" style="margin-left:12px;">{arb['sport']}</span>
+<span class="badge-blue" style="margin-left:8px;">{arb['market'].upper()}</span>
+{f'<span style="color:rgba(250,250,250,0.35); font-size:0.8rem; margin-left:8px;">{game_time}</span>' if game_time else ''}
+{f'<span style="margin-left:8px;">{live_html}</span>' if live_html else ''}
+{f'<span class="badge-green" style="margin-left:8px;">{num_legs}-WAY</span>' if num_legs > 2 else ''}
+</div>
+<div style="font-size:1.4rem; font-weight:800; color:#00D4AA;">+{arb['arb_pct']:.2f}% EDGE</div>
+</div>
+{legs_html}
+<div style="text-align:center; margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
+<span style="color:rgba(250,250,250,0.5);">Guaranteed Profit on ${bankroll:,.0f} bankroll:</span>
+<span style="color:#00D4AA; font-weight:800; font-size:1.3rem; margin-left:8px;">${profit_scaled:.2f}</span>
+</div>
+</div>"""
+                st.markdown(card_html, unsafe_allow_html=True)
                 st.markdown("")
         else:
             st.info("No arbitrage opportunities detected in current lines. Markets are generally efficient — check back when lines move!", icon="📊")
@@ -286,45 +270,30 @@ if dashboard:
 
                 live_html = '<span class="live-dot"></span>' if is_bet_live else ""
 
-                st.markdown(f"""
-                <div class="metric-card" style="padding:1rem 1.5rem;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            {live_html}
-                            <span style="font-weight:700; color:#FAFAFA;">{bet['event']}</span>
-                            <span class="badge-orange" style="margin-left:8px;">{bet['sport']}</span>
-                            <span style="color:rgba(250,250,250,0.35); font-size:0.8rem; margin-left:8px;">{game_time}</span>
-                        </div>
-                        <div style="font-size:1.1rem; font-weight:700; color:{ev_color};">
-                            EV: +${bet['ev_per_dollar']:.3f}/$
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:24px; margin-top:8px; align-items:center; flex-wrap:wrap;">
-                        <div>
-                            <span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Book:</span>
-                            <span style="color:{book_color(bet['bookmaker'])}; font-weight:600; margin-left:4px;">{bet['bookmaker']}</span>
-                        </div>
-                        <div>
-                            <span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Pick:</span>
-                            <span style="color:#FAFAFA; font-weight:500; margin-left:4px;">{bet['outcome']} @ {odds_str}</span>
-                        </div>
-                        <div>
-                            <span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Edge:</span>
-                            <span class="badge-green" style="margin-left:4px;">+{bet['edge_pct']:.1f}%</span>
-                        </div>
-                        <div>
-                            <span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Stake:</span>
-                            <span style="color:#00D4AA; font-weight:600; margin-left:4px;">${stake_scaled:.2f}</span>
-                        </div>
-                    </div>
-                    <div style="margin-top:6px; display:flex; gap:12px; flex-wrap:wrap;">
-                        <span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">Implied: {bet['implied_prob']:.1f}%</span>
-                        <span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">True: {bet['true_prob']:.1f}%</span>
-                        <span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">Market: {bet['market'].upper()}</span>
-                        {f'<span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">Consensus: {num_books} books</span>' if num_books else ''}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                ev_html = f"""<div class="metric-card" style="padding:1rem 1.5rem;">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<div>
+{live_html}
+<span style="font-weight:700; color:#FAFAFA;">{bet['event']}</span>
+<span class="badge-orange" style="margin-left:8px;">{bet['sport']}</span>
+<span style="color:rgba(250,250,250,0.35); font-size:0.8rem; margin-left:8px;">{game_time}</span>
+</div>
+<div style="font-size:1.1rem; font-weight:700; color:{ev_color};">EV: +${bet['ev_per_dollar']:.3f}/$</div>
+</div>
+<div style="display:flex; gap:24px; margin-top:8px; align-items:center; flex-wrap:wrap;">
+<div><span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Book:</span> <span style="color:{book_color(bet['bookmaker'])}; font-weight:600;">{bet['bookmaker']}</span></div>
+<div><span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Pick:</span> <span style="color:#FAFAFA; font-weight:500;">{bet['outcome']} @ {odds_str}</span></div>
+<div><span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Edge:</span> <span class="badge-green" style="margin-left:4px;">+{bet['edge_pct']:.1f}%</span></div>
+<div><span style="color:rgba(250,250,250,0.5); font-size:0.8rem;">Stake:</span> <span style="color:#00D4AA; font-weight:600;">${stake_scaled:.2f}</span></div>
+</div>
+<div style="margin-top:6px; display:flex; gap:12px; flex-wrap:wrap;">
+<span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">Implied: {bet['implied_prob']:.1f}%</span>
+<span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">True: {bet['true_prob']:.1f}%</span>
+<span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">Market: {bet['market'].upper()}</span>
+{f'<span style="color:rgba(250,250,250,0.4); font-size:0.8rem;">Consensus: {num_books} books</span>' if num_books else ''}
+</div>
+</div>"""
+                st.markdown(ev_html, unsafe_allow_html=True)
 
         else:
             st.info("No +EV bets found at current lines.", icon="📊")

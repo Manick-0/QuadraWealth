@@ -89,7 +89,7 @@ with tab2:
     st.markdown("### 🤖 RAG-Powered Stock Recommendations")
     st.caption("Powered by ChromaDB vector search over financial news — cross-referenced with your risk profile.")
 
-    if st.button("Generate Recommendations", type="primary", use_container_width=True):
+    if st.button("Generate Recommendations", type="primary"):
         with st.spinner("Running RAG pipeline..."):
             recs = api_post(
                 "/api/stocks/recommendations",
@@ -103,17 +103,16 @@ with tab2:
         if recs:
             for i, rec in enumerate(recs):
                 with st.container():
-                    st.markdown(f"""
-                    <div class="metric-card">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <span style="font-size:1.4rem; font-weight:700; color:#FAFAFA;">{rec['ticker']}</span>
-                                <span style="color:rgba(250,250,250,0.5); margin-left:12px;">{rec.get('name', '')}</span>
-                            </div>
-                            <div style="font-size:1.3rem; font-weight:700; color:#00D4AA;">${rec['price']:.2f}</div>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    card_html = f"""<div class="metric-card">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<div>
+<span style="font-size:1.4rem; font-weight:700; color:#FAFAFA;">{rec['ticker']}</span>
+<span style="color:rgba(250,250,250,0.5); margin-left:12px;">{rec.get('name', '')}</span>
+</div>
+<div style="font-size:1.3rem; font-weight:700; color:#00D4AA;">${rec['price']:.2f}</div>
+</div>
+</div>"""
+                    st.markdown(card_html, unsafe_allow_html=True)
 
                     c1, c2, c3 = st.columns([2, 1, 1])
                     with c1:
@@ -134,9 +133,14 @@ with tab2:
                         ])
                         st.markdown(signal_html, unsafe_allow_html=True)
 
-                    # Reasoning
-                    with st.expander("View AI Reasoning"):
-                        st.write(rec.get("reasoning", ""))
+                    # Reasoning (toggle button instead of broken st.expander)
+                    reasoning_key = f"reasoning_{i}"
+                    if reasoning_key not in st.session_state:
+                        st.session_state[reasoning_key] = False
+                    if st.button("▶ View AI Reasoning" if not st.session_state[reasoning_key] else "▼ Hide AI Reasoning", key=f"btn_{reasoning_key}"):
+                        st.session_state[reasoning_key] = not st.session_state[reasoning_key]
+                    if st.session_state[reasoning_key]:
+                        st.markdown(f"""<div style="background:rgba(0,0,0,0.2); border-radius:12px; padding:16px; margin:8px 0; color:rgba(250,250,250,0.8); font-size:0.9rem;">{rec.get('reasoning', '')}</div>""", unsafe_allow_html=True)
 
                     st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
     else:
@@ -191,7 +195,7 @@ with tab3:
                     yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.05)"),
                     title=f"{analyze_ticker} — 6 Month Price History",
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
             # Relevant news from RAG
             news = analysis.get("relevant_news", [])
@@ -203,13 +207,12 @@ with tab3:
                         "bearish": "badge-red",
                         "neutral": "badge-blue",
                     }.get(n.get("sentiment", "neutral"), "badge-blue")
-                    st.markdown(f"""
-                    <div class="metric-card" style="padding:1rem;">
-                        <span class='{sentiment_badge}'>{n.get('sentiment','').upper()}</span>
-                        <span class='badge-orange' style="margin-left:8px;">{n.get('sector','')}</span>
-                        <p style="margin-top:8px; color:rgba(250,250,250,0.8);">{n.get('text','')}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    news_html = f"""<div class="metric-card" style="padding:1rem;">
+<span class='{sentiment_badge}'>{n.get('sentiment','').upper()}</span>
+<span class='badge-orange' style="margin-left:8px;">{n.get('sector','')}</span>
+<p style="margin-top:8px; color:rgba(250,250,250,0.8);">{n.get('text','')}</p>
+</div>"""
+                    st.markdown(news_html, unsafe_allow_html=True)
         elif analysis:
             st.error(analysis.get("error", "Unknown error"))
     else:

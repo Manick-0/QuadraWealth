@@ -149,7 +149,7 @@ with tab1:
                     yaxis=dict(gridcolor="rgba(255,255,255,0.05)"),
                     showlegend=False,
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width='stretch')
 
 # ── Tab 2: Recommended Allocation ──
 with tab2:
@@ -207,7 +207,7 @@ with tab2:
                     showarrow=False,
                 )],
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
         with col_detail:
             st.markdown("#### Allocation Breakdown")

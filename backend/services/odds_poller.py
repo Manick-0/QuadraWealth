@@ -61,6 +61,7 @@ class OddsPoller:
             return
 
         self._running = True
+        self._auth_failed = False  # Reset on restart so we retry the API key
         self._session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=12),
             headers={"Accept": "application/json"},

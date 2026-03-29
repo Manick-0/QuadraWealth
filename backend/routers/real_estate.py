@@ -9,7 +9,9 @@ from backend.services.real_estate_service import (
     get_all_properties,
     get_hottest_properties,
     analyze_property_by_id,
+    get_available_locations,
 )
+from backend.config import settings
 
 router = APIRouter()
 
@@ -66,3 +68,19 @@ async def hottest_properties(
         state=state,
         city=city,
     )
+
+
+@router.get("/locations")
+async def available_locations():
+    """Return available city/state options for the UI filter dropdowns."""
+    return get_available_locations()
+
+
+@router.get("/data-source")
+async def data_source():
+    """Return current data source status."""
+    return {
+        "live_enabled": settings.USE_LIVE_REALESTATE,
+        "api_key_set": bool(settings.RAPIDAPI_KEY),
+        "source": "Realty Mole API" if (settings.USE_LIVE_REALESTATE and settings.RAPIDAPI_KEY) else "Mock Data (50 properties)",
+    }

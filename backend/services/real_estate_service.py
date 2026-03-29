@@ -1,12 +1,38 @@
 """
 QuadraWealth Real Estate Service
 Property screener with Cap Rate and Cash-on-Cash return calculations.
+
+Live data source: Realty Mole Property API via RapidAPI.
+Fallback: 50-property mock dataset.
 """
 import json
+import logging
+import requests as _req
 from pathlib import Path
 from typing import Optional
 
+from backend.config import settings
 
+logger = logging.getLogger("realestate.service")
+
+# ─────────────────────── US States lookup ───────────────────────
+US_STATES = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
+    "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware",
+    "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho",
+    "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas",
+    "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland",
+    "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi",
+    "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada",
+    "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York",
+    "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma",
+    "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina",
+    "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah",
+    "VT": "Vermont", "VA": "Virginia", "WA": "Washington", "WV": "West Virginia",
+    "WI": "Wisconsin", "WY": "Wyoming", "DC": "District of Columbia",
+}
+
+# ─────────────────────── Mock Data ───────────────────────
 def load_properties() -> list[dict]:
     """Load mock property dataset."""
     data_path = Path(__file__).parent.parent / "data" / "mock_properties.json"
@@ -14,6 +40,151 @@ def load_properties() -> list[dict]:
         return json.load(f)
 
 
+# ─────────────────────── Live API ───────────────────────
+_REALTY_MOLE_BASE = "https://realty-mole-property-api.p.rapidapi.com"
+_api_failed = False  # Set True on auth failure to avoid repeated 401s
+
+
+def _normalize_live_property(raw: dict, idx: int) -> dict:
+    """
+    Convert a Realty Mole API response dict into our standard property schema.
+    Fields vary by property – fill gaps with sensible defaults.
+    """
+    price = raw.get("price") or raw.get("lastSalePrice") or raw.get("assessedValue") or 250000
+    rent = raw.get("rentEstimate") or raw.get("rent") or int(price * 0.007)  # ~0.7% of price
+    sqft = raw.get("squareFootage") or raw.get("lotSize") or 1400
+    beds = raw.get("bedrooms") or 3
+    baths = raw.get("bathrooms") or 2
+    year = raw.get("yearBuilt") or 2010
+
+    # Taxes / insurance estimation
+    county = raw.get("county", "")
+    tax_rate = 0.012  # default 1.2%
+    prop_tax = raw.get("propertyTaxes") or int(price * tax_rate)
+    insurance = int(price * 0.004)  # ~0.4%
+    maintenance = int(price * 0.01)  # ~1%
+    hoa = 0  # Realty Mole doesn't provide HOA
+
+    # Property type mapping
+    ptype_raw = (raw.get("propertyType") or "Single Family").lower()
+    if "condo" in ptype_raw:
+        ptype = "Condo"
+        hoa = 300  # Assume condo HOA
+    elif "town" in ptype_raw:
+        ptype = "Townhouse"
+        hoa = 180
+    elif "multi" in ptype_raw or "duplex" in ptype_raw or "triplex" in ptype_raw:
+        ptype = "Multi-family"
+    else:
+        ptype = "SFH"
+
+    # Coordinates
+    lat = raw.get("latitude") or raw.get("lat") or 0
+    lng = raw.get("longitude") or raw.get("lng") or raw.get("lon") or 0
+
+    city = raw.get("city", "Unknown")
+    state = raw.get("state", "")
+    address_line = raw.get("addressLine1") or raw.get("formattedAddress") or raw.get("address", "")
+
+    return {
+        "id": 1000 + idx,
+        "address": address_line,
+        "city": city,
+        "state": state,
+        "zip_code": raw.get("zipCode") or raw.get("zip", ""),
+        "property_type": ptype,
+        "price": price,
+        "bedrooms": beds,
+        "bathrooms": baths,
+        "sqft": sqft,
+        "year_built": year,
+        "expected_rent": rent,
+        "property_tax": prop_tax,
+        "insurance": insurance,
+        "maintenance_cost": maintenance,
+        "hoa_fee": hoa,
+        "market_growth_rate": round(3.0 + (hash(city) % 30) / 10, 1),  # Deterministic per city
+        "lat": lat,
+        "lng": lng,
+        "_source": "live",
+    }
+
+
+def fetch_live_properties(
+    city: Optional[str] = None,
+    state: Optional[str] = None,
+    limit: int = 20,
+) -> list[dict]:
+    """
+    Fetch properties from Realty Mole Property API on RapidAPI.
+    Returns normalized property list or empty list on failure.
+    """
+    global _api_failed
+
+    api_key = settings.RAPIDAPI_KEY
+    if not api_key or _api_failed:
+        return []
+
+    headers = {
+        "X-RapidAPI-Key": api_key,
+        "X-RapidAPI-Host": "realty-mole-property-api.p.rapidapi.com",
+    }
+
+    # Build query
+    params = {"limit": str(min(limit, 50))}
+    if city:
+        params["city"] = city
+    if state:
+        params["state"] = state
+    # Default to Austin, TX if no location specified
+    if not city and not state:
+        params["city"] = "Austin"
+        params["state"] = "TX"
+
+    try:
+        resp = _req.get(
+            f"{_REALTY_MOLE_BASE}/properties",
+            headers=headers,
+            params=params,
+            timeout=15,
+        )
+
+        if resp.status_code == 401 or resp.status_code == 403:
+            logger.error("🔑 RapidAPI auth failed — falling back to mock data")
+            _api_failed = True
+            return []
+
+        if resp.status_code == 429:
+            logger.warning("⏳ RapidAPI rate limit hit — using mock data")
+            return []
+
+        if resp.status_code != 200:
+            logger.warning("Realty Mole API returned %d: %s", resp.status_code, resp.text[:200])
+            return []
+
+        data = resp.json()
+        if not isinstance(data, list):
+            data = [data]
+
+        result = [_normalize_live_property(p, i) for i, p in enumerate(data) if p]
+        logger.info("📍 Fetched %d live properties from Realty Mole API", len(result))
+        return result
+
+    except _req.exceptions.Timeout:
+        logger.warning("Realty Mole API timed out")
+        return []
+    except Exception as e:
+        logger.error("Realty Mole API error: %s", e)
+        return []
+
+
+def reset_api_state():
+    """Reset the API failure flag (called on service restart)."""
+    global _api_failed
+    _api_failed = False
+
+
+# ─────────────────────── Calculations ───────────────────────
 def calculate_property_analysis(
     prop: dict,
     goal: str = "cash_flow",
@@ -83,7 +254,6 @@ def calculate_property_analysis(
     score = 50  # Base
 
     if goal == "appreciation":
-        # Weight market growth and price/sqft ratio
         if growth_rate > 5.0:
             score += 25
         elif growth_rate > 4.0:
@@ -99,14 +269,12 @@ def calculate_property_analysis(
         elif price_per_sqft < 250:
             score += 5
 
-        # Newer properties appreciate better
         if prop["year_built"] >= 2018:
             score += 10
         elif prop["year_built"] >= 2012:
             score += 5
 
     elif goal == "long_term":
-        # Weight cap rate + market stability
         if cap_rate > 8:
             score += 20
         elif cap_rate > 6:
@@ -115,15 +283,13 @@ def calculate_property_analysis(
             score += 5
 
         if 3.0 <= growth_rate <= 5.0:
-            score += 15  # Stable, moderate growth
+            score += 15
         elif growth_rate > 5.0:
             score += 8
 
-        # Multi-family and SFH are better long-term holds
         if prop["property_type"] in ["SFH", "Multi-family"]:
             score += 10
 
-        # Lower monthly expenses relative to rent
         expense_ratio = total_monthly_expenses / monthly_rent if monthly_rent > 0 else 2
         if expense_ratio < 0.7:
             score += 10
@@ -131,7 +297,6 @@ def calculate_property_analysis(
             score += 5
 
     elif goal == "cash_flow":
-        # Weight cash-on-cash return and monthly cash flow
         if cash_on_cash > 10:
             score += 25
         elif cash_on_cash > 6:
@@ -146,11 +311,9 @@ def calculate_property_analysis(
         elif monthly_cash_flow > 0:
             score += 5
 
-        # Multi-family is great for cash flow
         if prop["property_type"] == "Multi-family":
             score += 10
 
-        # Low property tax helps cash flow
         tax_rate = (property_tax / price * 100) if price > 0 else 999
         if tax_rate < 1.0:
             score += 8
@@ -174,6 +337,7 @@ def calculate_property_analysis(
     }
 
 
+# ─────────────────────── Query helpers ───────────────────────
 def get_all_properties(
     property_type: Optional[str] = None,
     min_price: Optional[float] = None,
@@ -182,9 +346,18 @@ def get_all_properties(
     state: Optional[str] = None,
     city: Optional[str] = None,
 ) -> list[dict]:
-    """Return filtered list of properties."""
-    properties = load_properties()
+    """Return filtered list of properties. Tries live API first, falls back to mock."""
+    # Try live API
+    if settings.USE_LIVE_REALESTATE and settings.RAPIDAPI_KEY:
+        live = fetch_live_properties(city=city, state=state, limit=50)
+        if live:
+            properties = live
+        else:
+            properties = load_properties()
+    else:
+        properties = load_properties()
 
+    # Apply filters
     if property_type:
         properties = [p for p in properties if p["property_type"].lower() == property_type.lower()]
     if min_price is not None:
@@ -193,9 +366,10 @@ def get_all_properties(
         properties = [p for p in properties if p["price"] <= max_price]
     if min_bedrooms is not None:
         properties = [p for p in properties if p["bedrooms"] >= min_bedrooms]
-    if state:
+    # Only filter by state/city on mock data (live already has location filter)
+    if state and not any(p.get("_source") == "live" for p in properties):
         properties = [p for p in properties if p["state"].upper() == state.upper()]
-    if city:
+    if city and not any(p.get("_source") == "live" for p in properties):
         city_lower = city.lower()
         properties = [p for p in properties if city_lower in p.get("city", "").lower()]
 
@@ -229,3 +403,25 @@ def analyze_property_by_id(property_id: int, goal: str = "cash_flow") -> Optiona
         return None
 
     return calculate_property_analysis(prop, goal=goal)
+
+
+def get_available_locations() -> dict:
+    """
+    Return available cities and states from mock data for the location filter UI.
+    """
+    properties = load_properties()
+    states = sorted(set(p["state"] for p in properties))
+    cities_by_state = {}
+    for p in properties:
+        st = p["state"]
+        if st not in cities_by_state:
+            cities_by_state[st] = set()
+        cities_by_state[st].add(p["city"])
+
+    cities_by_state = {k: sorted(v) for k, v in cities_by_state.items()}
+
+    return {
+        "states": states,
+        "cities_by_state": cities_by_state,
+        "all_cities": sorted(set(p["city"] for p in properties)),
+    }

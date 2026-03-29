@@ -30,11 +30,12 @@ class Settings(BaseSettings):
     # API Keys
     ODDS_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
+    RAPIDAPI_KEY: str = ""  # For Realty Mole Property API on RapidAPI
 
     # Feature Flags — controls live API vs mock data
     USE_LIVE_ODDS: bool = True  # Will auto-fall back to mock if no API key
     USE_LIVE_STOCKS: bool = True  # yfinance is free, default to live
-    USE_LIVE_ZILLOW: bool = False  # Mock only (Zillow API requires paid RapidAPI)
+    USE_LIVE_REALESTATE: bool = True  # Uses Realty Mole API via RapidAPI
 
     # ── Odds Poller Configuration ──
     ODDS_POLL_INTERVAL: int = 60        # Seconds between polls (pre-match)

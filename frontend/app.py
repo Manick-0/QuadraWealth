@@ -230,6 +230,24 @@ div[data-testid="stStatusWidget"] {display: none !important;}
 #stDecoration {display: none !important;}
 .viewerBadge_container__r5tak {display: none !important;}
 .styles_viewerBadge__CvC9N {display: none !important;}
+
+/* Rename sidebar toggle button to "Menu" */
+button[data-testid="stSidebarCollapseButton"],
+button[data-testid="baseButton-headerNoPadding"] {
+    font-size: 0 !important;
+}
+button[data-testid="stSidebarCollapseButton"]::after,
+button[data-testid="baseButton-headerNoPadding"]::after {
+    content: "☰ Menu";
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #00D4AA;
+    letter-spacing: 0.03em;
+}
+button[data-testid="stSidebarCollapseButton"] span[data-testid="stIconMaterial"],
+button[data-testid="baseButton-headerNoPadding"] span[data-testid="stIconMaterial"] {
+    display: none !important;
+}
 </style>
 """, unsafe_allow_html=True)
 

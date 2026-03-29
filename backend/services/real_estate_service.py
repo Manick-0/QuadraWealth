@@ -117,6 +117,7 @@ def fetch_live_properties(
 ) -> list[dict]:
     """
     Fetch properties from Realty Mole Property API on RapidAPI.
+    Tries multiple endpoints: /randomProperties (free tier), /saleListings (paid).
     Returns normalized property list or empty list on failure.
     """
     global _api_failed
@@ -130,52 +131,66 @@ def fetch_live_properties(
         "X-RapidAPI-Host": "realty-mole-property-api.p.rapidapi.com",
     }
 
-    # Build query
-    params = {"limit": str(min(limit, 50))}
-    if city:
-        params["city"] = city
-    if state:
-        params["state"] = state
-    # Default to Austin, TX if no location specified
-    if not city and not state:
-        params["city"] = "Austin"
-        params["state"] = "TX"
+    # Endpoints to try in order (free-tier first, then paid)
+    endpoints = [
+        ("/randomProperties", {"limit": str(min(limit, 50))}),
+        ("/saleListings", {
+            "limit": str(min(limit, 50)),
+            **({"city": city} if city else {}),
+            **({"state": state} if state else {}),
+            **({"city": "Austin", "state": "TX"} if (not city and not state) else {}),
+        }),
+        ("/rentalListings", {
+            "limit": str(min(limit, 50)),
+            **({"city": city} if city else {}),
+            **({"state": state} if state else {}),
+            **({"city": "Austin", "state": "TX"} if (not city and not state) else {}),
+        }),
+    ]
 
-    try:
-        resp = _req.get(
-            f"{_REALTY_MOLE_BASE}/properties",
-            headers=headers,
-            params=params,
-            timeout=15,
-        )
+    for endpoint_path, params in endpoints:
+        try:
+            resp = _req.get(
+                f"{_REALTY_MOLE_BASE}{endpoint_path}",
+                headers=headers,
+                params=params,
+                timeout=15,
+            )
 
-        if resp.status_code == 401 or resp.status_code == 403:
-            logger.error("🔑 RapidAPI auth failed — falling back to mock data")
-            _api_failed = True
-            return []
+            if resp.status_code == 401 or resp.status_code == 403:
+                logger.error("🔑 RapidAPI auth failed — falling back to mock data")
+                _api_failed = True
+                return []
 
-        if resp.status_code == 429:
-            logger.warning("⏳ RapidAPI rate limit hit — using mock data")
-            return []
+            if resp.status_code == 429:
+                logger.warning("⏳ RapidAPI rate limit hit on %s — using mock data", endpoint_path)
+                return []
 
-        if resp.status_code != 200:
-            logger.warning("Realty Mole API returned %d: %s", resp.status_code, resp.text[:200])
-            return []
+            if resp.status_code == 404:
+                logger.debug("Endpoint %s not available, trying next...", endpoint_path)
+                continue
 
-        data = resp.json()
-        if not isinstance(data, list):
-            data = [data]
+            if resp.status_code != 200:
+                logger.warning("Realty Mole %s returned %d: %s", endpoint_path, resp.status_code, resp.text[:200])
+                continue
 
-        result = [_normalize_live_property(p, i) for i, p in enumerate(data) if p]
-        logger.info("📍 Fetched %d live properties from Realty Mole API", len(result))
-        return result
+            data = resp.json()
+            if not isinstance(data, list):
+                data = [data]
 
-    except _req.exceptions.Timeout:
-        logger.warning("Realty Mole API timed out")
-        return []
-    except Exception as e:
-        logger.error("Realty Mole API error: %s", e)
-        return []
+            result = [_normalize_live_property(p, i) for i, p in enumerate(data) if p]
+            logger.info("📍 Fetched %d live properties from Realty Mole %s", len(result), endpoint_path)
+            return result
+
+        except _req.exceptions.Timeout:
+            logger.warning("Realty Mole %s timed out", endpoint_path)
+            continue
+        except Exception as e:
+            logger.error("Realty Mole %s error: %s", endpoint_path, e)
+            continue
+
+    logger.warning("All Realty Mole endpoints failed — falling back to mock data")
+    return []
 
 
 def reset_api_state():

@@ -28,7 +28,7 @@ render_home_button()
 
 # ── Header ──
 st.markdown('<div class="glow-header">🎯 The Edge — Real-Time Arbitrage Scanner</div>', unsafe_allow_html=True)
-st.caption("Live odds across FanDuel, DraftKings, Hard Rock Bet, BetMGM, Caesars & PrizePicks • NBA • NFL • MLB • NHL • MLS • T20 Cricket")
+st.caption("Live odds across FanDuel, DraftKings, Hard Rock Bet, BetMGM, Caesars & PrizePicks • NBA • MLB")
 st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
 
 # ── Sidebar ──
@@ -36,7 +36,7 @@ with st.sidebar:
     st.markdown("### 🎯 Edge Settings")
     sport_filter = st.selectbox(
         "Sport",
-        ["All Sports", "NBA", "NFL", "MLB", "NHL", "MLS", "T20 Cricket"],
+        ["All Sports", "NBA", "MLB"],
     )
     bankroll = st.number_input("Bankroll ($)", value=1000, step=100, min_value=10)
 
@@ -45,8 +45,8 @@ with st.sidebar:
     auto_refresh = st.toggle("Auto-refresh", value=True)
     refresh_interval = st.select_slider(
         "Interval (seconds)",
-        options=[10, 15, 20, 30, 60],
-        value=15,
+        options=[30, 60, 120, 180, 300],
+        value=120,
     )
 
     st.markdown("---")
@@ -314,11 +314,7 @@ if dashboard:
         sport_api_map = {
             "All Sports": None,
             "NBA": "nba",
-            "NFL": "nfl",
             "MLB": "mlb",
-            "NHL": "nhl",
-            "MLS": "mls",
-            "T20 Cricket": "cricket",
         }
 
         selected_sport = sport_api_map.get(sport_filter)
@@ -327,7 +323,7 @@ if dashboard:
             odds_data = api_get(f"/api/edge/odds/{selected_sport}")
         else:
             odds_data = []
-            for sport_key in ["nba", "nfl", "mlb", "nhl", "mls", "cricket"]:
+            for sport_key in ["nba", "mlb"]:
                 result = api_get(f"/api/edge/odds/{sport_key}")
                 if result:
                     odds_data.extend(result)
@@ -341,16 +337,27 @@ if dashboard:
                     odds = event.get("odds", [])
                     if odds:
                         df = pd.DataFrame(odds)
-                        # Format odds with +/- sign
-                        df["line"] = df["price"].apply(lambda x: f"+{int(x)}" if x > 0 else str(int(x)))
-                        display_cols = ["bookmaker", "market", "outcome", "line"]
+                        # Format odds with +/- sign, handle None
+                        df["Line"] = df["price"].apply(lambda x: fmt_odds(x) if x is not None else "—")
+                        # Clean up point column — hide nulls, format numbers
                         if "point" in df.columns:
-                            display_cols.append("point")
+                            df["Spread/Total"] = df["point"].apply(
+                                lambda x: f"{x:+.1f}" if x is not None and x != "" else "—"
+                            )
+                        # Rename for display
+                        df["Book"] = df["bookmaker"]
+                        df["Market"] = df["market"].str.upper()
+                        df["Outcome"] = df["outcome"]
+                        display_cols = ["Book", "Market", "Outcome", "Line"]
+                        if "Spread/Total" in df.columns:
+                            display_cols.append("Spread/Total")
                         st.dataframe(
-                            df[display_cols].sort_values(["market", "outcome", "bookmaker"]),
+                            df[display_cols].sort_values(["Market", "Outcome", "Book"]),
                             hide_index=True,
-                            width='stretch',
+                            use_container_width=True,
                         )
+                    else:
+                        st.caption("No odds available for this event.")
         else:
             st.warning("No odds data available.", icon="⚠️")
 

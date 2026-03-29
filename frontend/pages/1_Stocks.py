@@ -109,11 +109,15 @@ with tab2:
                 },
                 json_data=sectors,
             )
-
         if recs:
-            for i, rec in enumerate(recs):
-                with st.container():
-                    card_html = f"""<div class="metric-card">
+            st.session_state["stock_recs"] = recs
+
+    # Display recommendations from session state (persists across reruns)
+    if "stock_recs" in st.session_state and st.session_state["stock_recs"]:
+        recs = st.session_state["stock_recs"]
+        for i, rec in enumerate(recs):
+            with st.container():
+                card_html = f"""<div class="metric-card">
 <div style="display:flex; justify-content:space-between; align-items:center;">
 <div>
 <span style="font-size:1.4rem; font-weight:700; color:#FAFAFA;">{rec['ticker']}</span>
@@ -122,37 +126,38 @@ with tab2:
 <div style="font-size:1.3rem; font-weight:700; color:#00D4AA;">${rec['price']:.2f}</div>
 </div>
 </div>"""
-                    st.markdown(card_html, unsafe_allow_html=True)
+                st.markdown(card_html, unsafe_allow_html=True)
 
-                    c1, c2, c3 = st.columns([2, 1, 1])
-                    with c1:
-                        render_score_badge(rec["score"], "Recommendation Score")
-                    with c2:
-                        risk_colors = {"low": "badge-green", "medium": "badge-blue", "high": "badge-red"}
-                        badge = risk_colors.get(rec.get("risk_level", "medium"), "badge-blue")
-                        st.markdown(f"**Risk:** <span class='{badge}'>{rec.get('risk_level', 'medium').upper()}</span>", unsafe_allow_html=True)
-                    with c3:
-                        st.markdown(f"**Sector:** {rec.get('sector', 'N/A')}")
+                c1, c2, c3 = st.columns([2, 1, 1])
+                with c1:
+                    render_score_badge(rec["score"], "Recommendation Score")
+                with c2:
+                    risk_colors = {"low": "badge-green", "medium": "badge-blue", "high": "badge-red"}
+                    badge = risk_colors.get(rec.get("risk_level", "medium"), "badge-blue")
+                    st.markdown(f"**Risk:** <span class='{badge}'>{rec.get('risk_level', 'medium').upper()}</span>", unsafe_allow_html=True)
+                with c3:
+                    st.markdown(f"**Sector:** {rec.get('sector', 'N/A')}")
 
-                    # Signals
-                    signals = rec.get("signals", [])
-                    if signals:
-                        signal_html = " ".join([
-                            f"<span class='badge-blue'>{s.replace('_', ' ').title()}</span>"
-                            for s in signals
-                        ])
-                        st.markdown(signal_html, unsafe_allow_html=True)
+                # Signals
+                signals = rec.get("signals", [])
+                if signals:
+                    signal_html = " ".join([
+                        f"<span class='badge-blue'>{s.replace('_', ' ').title()}</span>"
+                        for s in signals
+                    ])
+                    st.markdown(signal_html, unsafe_allow_html=True)
 
-                    # Reasoning (toggle button instead of broken st.expander)
-                    reasoning_key = f"reasoning_{i}"
-                    if reasoning_key not in st.session_state:
-                        st.session_state[reasoning_key] = False
-                    if st.button("▶ View AI Reasoning" if not st.session_state[reasoning_key] else "▼ Hide AI Reasoning", key=f"btn_{reasoning_key}"):
-                        st.session_state[reasoning_key] = not st.session_state[reasoning_key]
-                    if st.session_state[reasoning_key]:
-                        st.markdown(f"""<div style="background:rgba(0,0,0,0.2); border-radius:12px; padding:16px; margin:8px 0; color:rgba(250,250,250,0.8); font-size:0.9rem;">{rec.get('reasoning', '')}</div>""", unsafe_allow_html=True)
+                # Reasoning toggle — uses session_state so it survives reruns
+                reasoning_key = f"reasoning_{i}"
+                if reasoning_key not in st.session_state:
+                    st.session_state[reasoning_key] = False
+                if st.button("▶ View AI Reasoning" if not st.session_state[reasoning_key] else "▼ Hide AI Reasoning", key=f"btn_{reasoning_key}"):
+                    st.session_state[reasoning_key] = not st.session_state[reasoning_key]
+                    st.rerun()
+                if st.session_state[reasoning_key]:
+                    st.markdown(f"""<div style="background:rgba(0,0,0,0.2); border-radius:12px; padding:16px; margin:8px 0; color:rgba(250,250,250,0.8); font-size:0.9rem;">{rec.get('reasoning', '')}</div>""", unsafe_allow_html=True)
 
-                    st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
+                st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
     else:
         st.info("Click **Generate Recommendations** to run the RAG pipeline with your profile settings.", icon="🤖")
 

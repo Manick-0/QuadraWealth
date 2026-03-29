@@ -38,8 +38,8 @@ class Settings(BaseSettings):
     USE_LIVE_REALESTATE: bool = True  # Uses Realty Mole API via RapidAPI
 
     # ── Odds Poller Configuration ──
-    ODDS_POLL_INTERVAL: int = 60        # Seconds between polls (pre-match)
-    ODDS_POLL_LIVE_INTERVAL: int = 30   # Seconds between polls (live events)
+    ODDS_POLL_INTERVAL: int = 300       # Seconds between polls (pre-match) — conserve API credits
+    ODDS_POLL_LIVE_INTERVAL: int = 120  # Seconds between polls (live events)
     ODDS_POLL_ENABLED: bool = True      # Enable background polling
 
     # ── Arb / EV Thresholds ──
@@ -60,11 +60,7 @@ class Settings(BaseSettings):
     ]
     ODDS_API_SPORTS: list[str] = [
         "basketball_nba",
-        "americanfootball_nfl",
         "baseball_mlb",
-        "icehockey_nhl",
-        "soccer_usa_mls",
-        "cricket_ipl",
     ]
 
     # yfinance defaults

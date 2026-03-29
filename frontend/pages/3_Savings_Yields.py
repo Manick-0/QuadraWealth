@@ -9,8 +9,17 @@ import pandas as pd
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from frontend.components import inject_custom_css, render_metric_card, api_get, api_post, render_home_button
+_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+if _root not in sys.path:
+    sys.path.insert(0, _root)
+_frontend = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+if _frontend not in sys.path:
+    sys.path.insert(0, _frontend)
+
+try:
+    from frontend.components import inject_custom_css, render_metric_card, api_get, api_post, render_home_button
+except ImportError:
+    from components import inject_custom_css, render_metric_card, api_get, api_post, render_home_button
 
 st.set_page_config(page_title="QuadraWealth — Savings & Yields", page_icon="🏦", layout="wide")
 inject_custom_css()
@@ -101,22 +110,19 @@ with tab1:
 
                     yield_display = f"{v['current_yield']:.2f}%" if v["current_yield"] > 0 else "N/A (price appreciation)"
 
-                    st.markdown(f"""
-                    <div class="metric-card" style="padding:1rem 1.5rem;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <span style="font-weight:700; color:#FAFAFA; font-size:1.1rem;">{v['name']}</span>
-                            </div>
-                            <div style="font-size:1.3rem; font-weight:800; color:#00D4AA;">{yield_display}</div>
-                        </div>
-                        <div style="display:flex; gap:16px; margin-top:8px;">
-                            <span class="{risk_badge}">Risk: {v.get('risk_level', '').replace('_', ' ').title()}</span>
-                            <span class="badge-blue">Liquidity: {v.get('liquidity', '').title()}</span>
-                            <span style="color:rgba(250,250,250,0.4); font-size:0.85rem;">Min: ${v.get('min_investment', 0):,.0f}</span>
-                        </div>
-                        <p style="color:rgba(250,250,250,0.5); font-size:0.85rem; margin-top:6px; margin-bottom:0;">{v.get('description', '')}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    vehicle_html = f"""<div class="metric-card" style="padding:1rem 1.5rem;">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<div><span style="font-weight:700; color:#FAFAFA; font-size:1.1rem;">{v['name']}</span></div>
+<div style="font-size:1.3rem; font-weight:800; color:#00D4AA;">{yield_display}</div>
+</div>
+<div style="display:flex; gap:16px; margin-top:8px;">
+<span class="{risk_badge}">Risk: {v.get('risk_level', '').replace('_', ' ').title()}</span>
+<span class="badge-blue">Liquidity: {v.get('liquidity', '').title()}</span>
+<span style="color:rgba(250,250,250,0.4); font-size:0.85rem;">Min: ${v.get('min_investment', 0):,.0f}</span>
+</div>
+<p style="color:rgba(250,250,250,0.5); font-size:0.85rem; margin-top:6px; margin-bottom:0;">{v.get('description', '')}</p>
+</div>"""
+                    st.markdown(vehicle_html, unsafe_allow_html=True)
 
             # Yield comparison chart
             st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
@@ -220,16 +226,15 @@ with tab2:
                     "commodity": "#FF8C00",
                 }
                 color = color_map.get(key, "#FAFAFA")
-                st.markdown(f"""
-                <div style="display:flex; align-items:center; margin:8px 0;">
-                    <div style="width:14px; height:14px; border-radius:4px; background:{color}; margin-right:12px;"></div>
-                    <div style="flex:1; color:#FAFAFA; font-weight:500;">{labels.get(key, key)}</div>
-                    <div style="font-weight:700; color:{color}; font-size:1.1rem;">{pct:.1f}%</div>
-                </div>
-                <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden;">
-                    <div style="height:100%; width:{pct}%; background:{color}; border-radius:3px;"></div>
-                </div>
-                """, unsafe_allow_html=True)
+                alloc_html = f"""<div style="display:flex; align-items:center; margin:8px 0;">
+<div style="width:14px; height:14px; border-radius:4px; background:{color}; margin-right:12px;"></div>
+<div style="flex:1; color:#FAFAFA; font-weight:500;">{labels.get(key, key)}</div>
+<div style="font-weight:700; color:{color}; font-size:1.1rem;">{pct:.1f}%</div>
+</div>
+<div style="height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden;">
+<div style="height:100%; width:{pct}%; background:{color}; border-radius:3px;"></div>
+</div>"""
+                st.markdown(alloc_html, unsafe_allow_html=True)
 
         st.markdown('<div class="premium-divider"></div>', unsafe_allow_html=True)
 

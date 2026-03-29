@@ -10,8 +10,17 @@ from datetime import datetime
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from frontend.components import inject_custom_css, render_metric_card, api_get, render_home_button
+_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+if _root not in sys.path:
+    sys.path.insert(0, _root)
+_frontend = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+if _frontend not in sys.path:
+    sys.path.insert(0, _frontend)
+
+try:
+    from frontend.components import inject_custom_css, render_metric_card, api_get, render_home_button
+except ImportError:
+    from components import inject_custom_css, render_metric_card, api_get, render_home_button
 
 st.set_page_config(page_title="QuadraWealth — The Edge", page_icon="🎯", layout="wide")
 inject_custom_css()

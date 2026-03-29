@@ -182,11 +182,6 @@ def inject_custom_css():
     /* Hide Streamlit branding but KEEP sidebar toggle */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header[data-testid="stHeader"] {
-        background: transparent !important;
-        border-bottom: none !important;
-    }
-    div[data-testid="stToolbar"] {display: none !important;}
     div[data-testid="stDecoration"] {display: none !important;}
     div[data-testid="stStatusWidget"] {display: none !important;}
     .stDeployButton {display: none !important;}

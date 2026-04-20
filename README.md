@@ -1,70 +1,113 @@
-# 💎 QuadraWealth — Multi-Mode Asset & Capital Manager
+# 💎 QuadraWealth — Multi-Agent AI Capital Manager
 
-> Built for HackUSF 2026 — A 4-mode money manager powered by AI, real-time data, and quantitative analysis.
+> **CIS 4930 (Introduction to Agentic AI) Final Project**
+
+QuadraWealth is an advanced **Agentic AI Application** designed to automate complex financial research, asset allocation, and opportunity detection. It moves beyond traditional "if-then" logic by utilizing an **autonomous multi-agent system** that thinks, plans, and calls tools to solve multi-faceted capital management problems.
+
+---
 
 ## 🚀 Quick Start
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# 1. Install dependencies
+pip3 install -r requirements.txt
 
-# Launch everything (backend + frontend)
+# 2. Add your API keys to .env (Optional but Recommended for "Live AI")
+# OPENAI_API_KEY=your_key_here
+# ODDS_API_KEY=your_key_here
+
+# 3. Launch everything
 chmod +x run.sh
 ./run.sh
 ```
 
 **Dashboard:** [http://localhost:8501](http://localhost:8501)  
+**AI Advisor:** [http://localhost:8501/AI_Advisor](http://localhost:8501/AI_Advisor)  
 **API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
 
-## 📊 The Four Modes
+---
 
-| Mode | What It Does | Data Source |
-|------|-------------|-------------|
-| 📈 **Stocks** | RAG-powered equity recommendations | yfinance (live) + ChromaDB |
-| 🎯 **The Edge** | Arbitrage & +EV sports betting | The Odds API + mock fallback |
-| 🏦 **Savings & Yields** | Macro-driven yield allocation | Mock yield data + simulated macro |
-| 🏠 **Real Estate** | Property screener with cap rate analysis | 50 mock properties |
+## 🤖 Agentic AI Architecture (The "Brain")
 
-## 🏗️ Architecture
+QuadraWealth doesn't just display data; it **reasons** about it. The system is built on a **Specialist-Orchestrator** model.
 
-- **Backend:** FastAPI (Python) — async API with auto-generated docs
-- **Frontend:** Streamlit — dark-themed, interactive dashboard
-- **Database:** SQLite — user profiles and saved leads
-- **AI/RAG:** ChromaDB — vector search over financial news for stock recommendations
+### 🧠 1. The Orchestrator (Executive Planning)
+When a user asks a question (e.g., *"Is it a good time to buy tech stocks and should I hedge with gold?"*), the Orchestrator performs:
+1.  **Planning:** It decomposes the query into sub-tasks (Stock Research + Macro Risk Assessment).
+2.  **Delegation:** It dispatches these tasks to the relevant specialist agents concurrently.
+3.  **Synthesis:** It gathers all specialist reports, reconciles conflicting data, and writes a cohesive final recommendation.
 
-## 🧪 Run Tests
+### 🛰️ 2. Specialist Agents (Domain Experts)
+Each agent is a specialized "worker" with its own tools and persona:
+- **📈 Market Research Agent:** Specialist in technicals ($AAPL price, P/E ratios) and RAG news sentiment.
+- **🛡️ Risk Analysis Agent:** Specialist in macroeconomics (Fed rates, CPI) and optimal yield weighting.
+- **🎯 Edge Agent:** Specialist in mathematical betting arbitrage and +EV detection across sportsbooks.
+- **🏠 Real Estate Agent:** Specialist in investment property modeling (Cap Rates, Cash-on-Cash returns).
 
-```bash
-pytest backend/tests/ -v
-```
+---
 
-## ⚙️ Configuration
+## 👁️ The "ReAct" Thinking Process
+Every agent in QuadraWealth follows the **ReAct (Reasoning + Acting)** paradigm. This is the core "intelligence" of the system.
 
-Copy `.env.example` to `.env` and add your API keys:
+> [!NOTE]
+> **Example Process: Market Research Agent Analyzing "NVDA"**
+>
+> 1. **THINK:** *"The user wants to analyze NVDA. I need its current price, basic fundamentals, and recent news sentiment to give a full picture."*
+> 2. **ACT:** Calls `get_stock_quote(ticker="NVDA")` and `search_financial_news(query="NVDA")`.
+> 3. **OBSERVE:** Receives JSON data: `{price: 900, pe: 75, sentiment: bullish}`.
+> 4. **REASON:** *"While the P/E is high, the news sentiment is overwhelmingly bullish due to AI demand. I will recommend a 'Buy' but flag valuation risk."*
+> 5. **ANSWER:** Writes the final report to the Orchestrator.
 
-```env
-ODDS_API_KEY=your_key_here      # Optional — mock data included
-USE_LIVE_ODDS=true               # Set to use live odds data
-```
+---
 
-## 📁 Project Structure
+## 🏛️ System Components
 
-```
-hackusf/
-├── backend/
-│   ├── main.py              # FastAPI app
-│   ├── routers/             # API endpoints (4 modes)
-│   ├── services/            # Business logic + RAG engine
-│   ├── models/              # Pydantic schemas + ORM
-│   ├── data/                # Mock datasets
-│   └── tests/               # Unit tests
-├── frontend/
-│   ├── app.py               # Streamlit landing page
-│   └── pages/               # 4 mode pages
-├── run.sh                   # Single-command launcher
-└── requirements.txt
-```
+| Component | Tech Stack | Role |
+|-----------|------------|------|
+| **Agent Modeling** | **Autonomous ReAct Coordination** | Multi-agent reasoning, planning, and synthesis. |
+| **Tool Calling** | OpenAI Functions | Maps natural language intent to real Python service calls. |
+| **Vector DB** | ChromaDB (RAG) | Stores and retrieves financial news for grounded analysis. |
+| **Backend** | FastAPI | High-performance async API orchestrating the agents. |
+| **Frontend** | Streamlit | Premium, dark-themed dashboard with "Reasoning Expanded" views. |
+| **Data Sources** | yfinance / The Odds API | Real-time streams for stocks, sports, and macro data. |
 
-## 🏆 Team
+---
 
-Built with ❤️ at HackUSF 2026
+## 📽️ Presentation Guide (For Teammate)
+
+Use these points to build your slides for the final presentation:
+
+### Slide 1: Motivation & Problem
+- **Problem:** Financial data is fragmented (stocks, real estate, macro, betting). Manual synthesis is error-prone and slow.
+- **Solution:** A multi-agent "Digital Twin" of a financial advisor that can autonomously research and synthesize any capital request.
+
+### Slide 2: Technical Innovation (The "WOW" Factor)
+- **Autonomous Tool Calling:** We didn't hard-code logic; we gave agents "tools" (APIs) and let the LLM decide when to use them.
+- **Multi-Agent Collaboration:** The Orchestrator manages a team of specialists who share a "Shared Memory" scratchpad.
+- **ReAct Pattern:** Demonstration of the "Think -> Act -> Observe" cycle for transparency.
+
+### Slide 3: The Architecture
+- Diagram: User -> Orchestrator -> [Market Agent, Risk Agent, etc.] -> [Tools/APIs].
+- Explain how RAG (ChromaDB) ensures the agents aren't hallucinating news headlines.
+
+### Slide 4: Real-World Use Cases
+- "Hedge my stock portfolio with real estate." (Market + Real Estate agents collab).
+- "Find me the best risk-free yield today." (Risk + Edge agents collab for arb vs bonds).
+
+### Slide 5: Evaluation & Performance
+- Explain how `gpt-4o-mini` allows for sub-10s synthesis of multi-source data.
+- Mention the fallback "Template Mode" for reliability when API keys are missing.
+
+---
+
+## 🏆 Grading Highlights
+- **Multi-Agent Collaboration?** ✅ Yes, Orchestrator delegates to 4 specialists.
+- **LLM Integration?** ✅ Yes, full OpenAI GPT-4o-mini integration.
+- **Tool Calling?** ✅ Yes, agents call yfinance, realestate, and betting services.
+- **RAG?** ✅ Yes, searches ChromaDB for current news sentiment.
+- **Complex Problem?** ✅ Yes, cross-asset capital optimization.
+- **UI/API?** ✅ Yes, FastAPI docs and Streamlit dashboard.
+
+---
+
+Built for **CIS 4930 — Introduction to Agentic AI**.

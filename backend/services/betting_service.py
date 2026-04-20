@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 QuadraWealth Betting / Edge Service — v2.0
 Optimized arbitrage detection, +EV calculation, and The Odds API integration.

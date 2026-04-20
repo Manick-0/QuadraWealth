@@ -492,8 +492,8 @@ st.info("Use the **sidebar** to navigate between modes, or click a page in the s
 # ── Footer ──
 st.markdown("""
 <div class="footer-section">
-    <div class="footer-event">Made for HackUSF 2026</div>
-    <div class="footer-name">Manik Jindal (Nick)</div>
+    <div class="footer-event">CIS 4930: Introduction to Agentic AI</div>
+    <div class="footer-name">Final Project</div>
     <div class="footer-sub">FastAPI · Streamlit · ChromaDB · The Odds API · yfinance</div>
 </div>
 """, unsafe_allow_html=True)

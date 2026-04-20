@@ -72,12 +72,13 @@ app.add_middleware(
 )
 
 # ── Register Routers ──
-from backend.routers import stocks, betting, yields, real_estate  # noqa: E402
+from backend.routers import stocks, betting, yields, real_estate, agents  # noqa: E402
 
 app.include_router(stocks.router, prefix="/api/stocks", tags=["Stocks"])
 app.include_router(betting.router, prefix="/api/edge", tags=["The Edge"])
 app.include_router(yields.router, prefix="/api/yields", tags=["Savings & Yields"])
 app.include_router(real_estate.router, prefix="/api/realestate", tags=["Real Estate"])
+app.include_router(agents.router, prefix="/api/agents", tags=["AI Agents"])
 
 
 @app.get("/")

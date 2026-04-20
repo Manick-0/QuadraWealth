@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 QuadraWealth Configuration
 Centralized settings with environment variable support and fallback defaults.

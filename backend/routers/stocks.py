@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 QuadraWealth Stocks Router
 API endpoints for stock portfolio management and recommendations.

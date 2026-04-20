@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 QuadraWealth Stock Service
 yfinance integration, portfolio simulation, and RAG-powered recommendations.

@@ -23,18 +23,18 @@ echo -e "${NC}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo -e "${YELLOW}📦 Checking dependencies...${NC}"
-pip install -q -r "$SCRIPT_DIR/requirements.txt"
+pip3 install -q -r "$SCRIPT_DIR/requirements.txt"
 
 echo -e ""
 echo -e "${GREEN}🚀 Starting FastAPI backend on port 8000...${NC}"
 cd "$SCRIPT_DIR"
-uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload &
+python3 -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload &
 BACKEND_PID=$!
 
 sleep 3
 
 echo -e "${GREEN}🎨 Starting Streamlit frontend on port 8501...${NC}"
-streamlit run frontend/app.py --server.port 8501 --server.headless true &
+python3 -m streamlit run frontend/app.py --server.port 8501 --server.headless true &
 FRONTEND_PID=$!
 
 echo ""

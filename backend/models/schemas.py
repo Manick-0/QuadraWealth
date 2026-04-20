@@ -237,3 +237,29 @@ class PropertyAnalysis(BaseModel):
     mortgage_payment: float
     goal_score: float = Field(description="0-100 score based on selected investment goal")
     goal: str
+
+
+# ─── Multi-Agent AI (New) ─────────────────────────────────
+
+class AgentChatRequest(BaseModel):
+    query: str
+    risk_tolerance: str = "moderate"
+
+
+class ReasoningStep(BaseModel):
+    step: str
+
+
+class AgentDetail(BaseModel):
+    agent: str
+    role: str
+    response: str
+    reasoning_steps: list[str] = []
+
+
+class AgentChatResponse(BaseModel):
+    query: str
+    response: str
+    agents_involved: list[str]
+    agent_details: list[AgentDetail]
+    execution_plan: dict

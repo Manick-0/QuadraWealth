@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 QuadraWealth Real Estate Service
 Property screener with Cap Rate and Cash-on-Cash return calculations.

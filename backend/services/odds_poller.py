@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 QuadraWealth — Async Odds Poller
 Background service that continuously fetches live odds from The Odds API

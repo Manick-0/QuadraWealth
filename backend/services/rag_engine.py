@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 QuadraWealth RAG Engine
 ChromaDB-powered vector store for financial news embedding and retrieval.

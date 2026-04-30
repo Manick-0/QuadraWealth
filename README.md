@@ -13,7 +13,7 @@ QuadraWealth is a full-stack **Agentic AI Application** that unifies four invest
 |------|--------|
 | Manik Jindal | Backend Developer|
 | Tomas Pastore |Frontend Developer|
-
+USED AntiGravity to write parts of the cod
 ---
 
 ## 📋 Table of Contents

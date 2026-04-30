@@ -9,10 +9,10 @@ QuadraWealth is a full-stack **Agentic AI Application** that unifies four invest
 
 ## 👥 Team
 
-| Name | USF ID |
+| Name | Role |
 |------|--------|
-| Manik Jindal | U07146364 |
-| Tomas Pastore | |
+| Manik Jindal | Backend Developer|
+| Tomas Pastore |Frontend Developer|
 
 ---
 
